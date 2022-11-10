@@ -1,0 +1,143 @@
+\chapter{Estado del Arte}\label{chapter:state-of-the-art}
+
+Las redes neuronales han sido las encargadas de los avances actuales en el campo TTS, por tanto esta será la línea seguida en la investigación. \\
+
+
+Coqui TTS[\cite{coqui-doc}] es una biblioteca para la generación avanzada de texto a voz. Se basa en las últimas investigaciones y se diseñó para lograr el mejor equilibrio entre la facilidad de entrenamiento, la velocidad y la calidad. Coqui viene con modelos preentrenados, herramientas para medir la calidad del conjunto de datos y ya se utiliza en más de 20 idiomas para productos y proyectos de investigación.
+
+
+Para lograr la transformación de texto a voz, Coqui sigue dos enfoques distintos: el primero es un sistema de dos estapas: una combinación de dos modelos, uno para convertir de texto a espectograma de mel, y luego otro de espectograma a onda sonora; y el segundo es un modelo de extremo a extremo.  
+
+\section{Sistemas de dos etapas}
+
+El paradigma predominante en la conversión de texto a voz es la síntesis en dos etapas: primero, producir espectrogramas a escala de mel a partir del texto y, luego, las ondas de sonido reales con un modelo de codificador de voz(VoCoder). La representación acústica de bajo nivel: espectograma de mel, es la utilizada como nexo entre las dos componentes.
+
+
+\subsection{Modelos TTS}
+
+\subsubsection{FastSpeech}
+
+FastSpeech, una novedosa red de avance basada en Transformer para generar espectrogramas de mel en paralelo para TTS; toma como entrada una secuencia de texto(fonema) y genera espectrogramas de mel de forma no autorregresiva. Adopta una red feed-forward basada en la autoatención en Transformer y convolución de 1D. 
+
+%Dado que una secuencia de espectrograma mel es mucho más larga que su correspondiente secuencia de fonemas, para resolver el problema de la falta de coincidencia de longitud entre las dos secuencias, FastSpeech adopta un regulador de longitud que aumenta la muestra de la secuencia de fonemas de acuerdo con la duración del fonema (es decir, el número de espectrogramas mel a los que corresponde cada fonema) para que coincida con la longitud de la secuencia del espectrograma mel. El regulador se basa en un predictor de duración de fonemas, que predice la duración de cada fonema. 
+%En lugar de utilizar la arquitectura basada en codificador-atención-decodificador adoptada por la mayoría de las generaciones autorregresivas y no autorregresivas basadas en secuencia a secuencia.
+
+El modelo resuelve problemas existentes en otros modelos TTS de la siguiente forma:
+
+\begin{itemize}
+	\item A través de la generación de espectrogramas de mel paralelos, FastSpeech acelera enormemente el proceso de síntesis.
+	\item El predictor de duración de fonemas asegura alineaciones estrictas entre un fonema y sus espectrogramas, lo que es muy diferente de las alineaciones de atención automáticas y suaves en los modelos autorregresivos. Por lo tanto, FastSpeech evita los problemas de propagación de errores y alineaciones de atención incorrectas, lo que reduce la proporción de palabras omitidas y palabras repetidas.
+	\item El regulador de longitud puede ajustar fácilmente la velocidad de la voz alargando o acortando la duración del fonema para determinar la duración de los espectrogramas de mel generados, y también puede controlar parte de la prosodia añadiendo pausas entre fonemas adyacentes.
+\end{itemize}
+
+
+\textbf{Arquitectura}\\
+
+Feed-Forward Transformer: \\
+La arquitectura para Fast Speech es una estructura de avance basada en la autoatención en Transformer y la convolución de 1D; se nombra esta estructura como Feed-Forward Transformer (FFT). Feed-Forward Transformer apila múltiples bloques FFT para la transformación de fonema a espectrograma de mel, con $N$ bloques en el lado del fonema y $N$ bloques en el lado del espectrograma de mel, con un regulador de longitud en el medio para cerrar la brecha de longitud entre el fonema y la secuencia del espectrograma de mel. Cada bloque FFT consta de una red convolucional de 1D y de autoatención. La red de autoatención consiste en una atención de múltiples cabezas para extraer la información de posición cruzada. \\ %Las conexiones residuales, la normalización de capas y el abandono(drop-out) se agregan después de la red de autoatención y la red convolucional 1D, respectivamente.\\
+
+Regulador de longitud: \\
+El regulador de longitud se utiliza para resolver el problema de la discordancia de longitud entre el fonema y la secuencia del espectrograma en el transformador de avance, así como para controlar la velocidad de la voz y parte de la prosodia. La longitud de una secuencia de fonemas suele ser menor que la de su secuencia de espectrograma de mel, y cada fonema corresponde a varios espectrogramas de mel. \\
+
+Predictor de duración: \\
+La predicción de la duración de los fonemas es importante para el regulador de longitud.
+El predictor consta de una red convolucional de 1D de 2 capas con activación ReLU, cada una seguida de la normalización de la capa y la capa de exclusión, y una capa lineal adicional para generar un escalar, que es exactamente la duración prevista del fonema.\\
+
+\textbf{Experimentación}\\
+
+El entrenamiento de FastSpeech y de todos los modelos TTS se realiza sobre un conjunto de datos que contiene clips de audios con sus correspondientes transcripciones de texto. Específicamente para FastSpeech, se divide al azar el conjunto de datos en 3 conjuntos: muestras para entrenamiento, muestras para validación y muestras para las pruebas. \\
+
+
+El modelo FastSpeech puede casi coincidir con el modelo autoregresivo Transformer TTS en términos de calidad de voz, acel
+era la generación de espectrograma mel por 270x y la síntesis de voz de extremo a extremo por 38x, casi se elimina el problema de saltar y repetir palabras, y puede ajustar la velocidad de voz (0.5x-1.5x) sin problemas[\cite{ren2019fastspeech}].
+
+
+\subsubsection{FastPitch}
+FastPitch es un modelo TTS feed-forward completamente paralelo basado en FastSpeech, condicionado por contornos de frecuencia fundamentales. El modelo predice contornos de tono durante la inferencia. Al alterar estas predicciones, el discurso generado puede ser más expresivo, coincidir mejor con la semántica del enunciado y, al final, ser más atractivo para el oyente.
+
+Los modelos paralelos pueden sintetizar órdenes de magnitud de espectrogramas de mel más rápido que los autorregresivos, ya sea basándose en alineaciones externas o alineándose ellos mismos. El condicionamiento en la frecuencia fundamental también mejora la convergencia y elimina la necesidad de destilar el conocimiento de los objetivos del espectrograma de mel utilizados en FastSpeech.\\
+
+\textbf{Arquitectura}\\
+
+Se basa en FastSpeech y se compone principalmente de dos pilas de transformadores alimentados hacia adelante, feed-forward(FFTr) . El primero opera en la resolución de los tokens de entrada, el segundo en la resolución de los cuadros de salida.
+La primera pila de FFTr produce la representación oculta $h$. La representación oculta, se usa para hacer predicciones sobre la duración y el tono promedio de cada caracter con una red neuronal convolucional de 1D.  A continuación, el tono se proyecta para que coincida con la dimensionalidad de la representación oculta y se suma a $h$. La suma se muestrea discretamente y se pasa a la salida FFTr, que produce la secuencia de espectrograma mel de salida[\cite{lancucki2021fastpitch}].\\
+
+\textbf{Experimentación} \\
+Para el entrenamiento y la experimentación los parámetros del modelo siguen principalmente FastSpeech.
+
+
+\subsubsection{Tacotron}
+
+Tacotron es un modelo TTS de tipo secuencia a secuencia con un paradigma de atención. Este modelo toma caracteres como entrada y devuelve un espectograma sin procesar usando técnicas para mejorar un modelo \textit{vanilla seq2seq}. Dado un par <texto,audio>, Tacotron puede ser entrenado desde cero con una inicialización aleatoria, y no requiere alineación a nivel de fonema.\\
+
+\textbf{Arquitectura} \\
+
+La columna vertebral de Tacotron es un modelo seq2seq con atención, que toma caracteres como entrada, y devuelve el correspondiente espectograma sin procesar, para luego pasarlo al modelo o algoritmo que sinteiza la voz. En el centro de todo esto se encuentra un codificador,un decodificador basado en atención y una red de post procesamiento.\\
+
+Tacotron se basa en cuadros, o frames en inglés, por lo que la inferencia es sustancialmente más rápida que los métodos autorregresivos a nivel de muestra. A diferencia de otros trabajos más antiguos, Tacotron no necesita características lingüísticas diseñadas a mano ni componentes complejos como un alineador de Modelo Markov oculto(HMM). Este modelo realiza una
+normalización de texto simple[\cite{wang2017tacotron}].
+
+
+\subsubsection{Tacotron 2}
+
+Tacotron 2 es similar al anteriormente mencionado Tacotron; es una red recurrente de predicción de características, de tipo secuencia a secuencia con atención, que mapea incrustaciones(embeddings) de caracteres en espectrogramas a escala de mel. 
+
+Un espectrograma de frecuencia de mel está relacionado con el espectograma de frecuencia lineal, es decir, la magnitud de la transformada de Fourier de tiempo corto (STFT). Se obtiene aplicando una transformada no lineal al eje de frecuencia de la STFT, inspirado en respuestas calificadas por el sistema auditivo humano, y resume el contenido de frecuencia con menos dimensiones.
+
+El uso de una escala de frecuencia auditiva de este tipo tiene el efecto de enfatizar detalles en frecuencias más bajas, que son fundamentales para la inteligibilidad del habla, al mismo tiempo que se resta importancia a los detalles de alta frecuencia, que están dominados por ráfagas de ruido y generalmente no necesitan ser modelados con alta fidelidad. Debido a estas propiedades, las características derivadas de la escala de mel se han utilizado como representación base para el reconocimiento de voz durante muchas décadas. 
+
+Para Tacotron2 los espectrogramas de mel se calculan a través de un transformada de Fourier de tiempo corto (STFT) utilizando un tamaño de cuadro de 50 ms, 12,5 ms de salto de cuadro y una función de ventana de Hann. Se tranforma la magnitud de la STFT a la escala de mel usando un banco de filtros de 80 canales mel que abarca de 125 Hz a 7,6 kHz, seguido de una compresión de registro de rango dinámico. Antes de la compresión de registros, las magnitudes de salida del banco de filtros se recortan a un valor mínimo de 0,01 para limitar el rango dinámico en el dominio logarítmico.[\cite{shen2018natural}] \\
+
+La red del modelo en cuestión está compuesta por un codificador y un decodificador con atención. El codificador convierte una secuencia de caracteres en una representación oculta que alimenta al decodificador para predecir un espectrograma.\\  
+
+Los caracteres de entrada se representan utilizando una incrustación de caracteres 512-dimensional, que se pasan a través de una pila de 3 capas convolucionales, cada una de las cuales contiene 512 filtros con organización 5 × 1, es decir, donde cada filtro abarca 5 caracteres, seguido de la normalización por lotes y activaciones de ReLU[\cite{shen2018natural}]. Como en Tacotron, estas capas convolucionales modelan el contexto a largo plazo en la secuencia de caracteres de entrada. La salida de la capa convolucional final se pasa a una sola capa bidireccional LSTM que contiene 512 unidades (256 en cada dirección) para generar las características codificadas.
+
+
+
+La salida del codificador es consumida por una red de atención que resume la secuencia codificada completa como un vector de contexto de longitud fija para cada paso de salida del decodificador. Se usa la atención sensible a la ubicación de [\cite{chorowski2015attention}], que extiende el mecanismo de atención aditiva [\cite{bahdanau2014neural}] para usar pesos de atención acumulativos de anteriores pasos de tiempo del decodificador como una funcionalidad adicional. Esto anima al modelo a seguir adelante consistentemente a través de la entrada, mitigando los posibles modos de falla donde algunas subsecuencias son repetidas o ignoradas por el decodificador.
+Las probabilidades de atención se calculan después de proyectar las entradas y funciones de localización a representaciones ocultas de 128 dimensiones. Las funcionalidades de localización se calculan utilizando 32 filtros de convolución 1-D de longitud 31[\cite{shen2018natural}]. \\
+
+El decodificador es una red neuronal autorregresiva recurrente que predice un espectrograma de mel a partir de la secuencia de entrada codificada un fotograma a la vez. La predicción del paso de tiempo anterior es primero pasado a través de una pequeña red previa que contiene 2 capas completamente conectadas de 256 unidades ReLU ocultas. La pre-red actuando como un cuello de botella de información es esencial para el aprendizaje de la atención.
+
+La salida de la pre-red y el vector de contexto de atención se concatenan y pasan a través de una pila de 2 capas \textit{Long Short-Term Memory(LSTM)} unidireccionales con 1024 unidades. La concatenación de la salida LSTM y el vector de contexto de atención se proyecta a través de una transformación lineal para predecir el cuadro de espectrograma objetivo. Finalmente, se pasa el espectrograma de mel predicho a través de una post-red convolucional de 5 capas que predice un residuo a agregar a la predicción para mejorar la reconstrucción general. Cada capa post-net está compuesta por 512 filtros con forma 5×1 con lote normalización, seguida de activaciones de tanh en todas las capas excepto en la final[\cite{shen2018natural}].\\
+
+
+En paralelo a la predicción de cuadros de espectrograma, la concatenación de
+salida del decodificador LSTM y el contexto de atención se proyectan a un escalar y pasa a través de una activación sigmoidea para predecir la probabilidad de que la secuencia de salida se haya completado. La predicción de este ``token de parada'' se usa durante la inferencia para permitir que el modelo determine dinámicamente cuándo terminar la generación en lugar de generar siempre por una duración fija. Específicamente, la generación se completa en el primer fotograma para el que esta probabilidad supera un umbral de 0,5.\\
+
+Las capas convolucionales en la red se regularizan usando abandono(dropout) con probabilidad 0.5, y las capas LSTM son regularizadas usando desconexión(zoneout) con probabilidad 0.1. Para introducir la variación de salida en tiempo de inferencia, se aplica dropout con probabilidad 0.5 solo a capas en la pre-red del decodificador autorregresivo[\cite{shen2018natural}].
+
+
+En contraste con el Tacotron original, este modelo utiliza una construcción más simple, usando LSTM vainilla y capas convolucionales en el codificador y decodificador en lugar de pilas CBHG y capas recurrentes GRU. No se usa un "factor de reducción", es decir, cada paso del decodificador corresponde a un único cuadro de espectrograma.
+
+Este sistema puede ser entrenado directamente desde un conjunto de datos sin depender de una compleja ingeniería de características, y logra calidad de sonido de última generación cercana a la del habla humana natural. Los resultados de Tacotron 2, constituyen un paso de avance sobre Tacotron y otros sistemas previos, sin embargo dejan aún espacio para mejoras. 
+
+
+\subsection{VoCoders}
+  Los VoCoders neuronales basados en redes neuronales profundas pueden generar voces similares a las humanas, en lugar de utilizar las tradicionales
+  métodos que contienen artefactos audibles[\cite{griffin1984signal}][\cite{kawahara1999restructuring}][\cite{morise2016world}]. 
+  
+  La línea principal de la investigación se basa en los modelos TTS, como los antes expuestos, sin embargo como no es posible sintetizar voz sin un VoCoder, y luego de varias pruebas realizadas, se concluye que los más adecuados para el objetivo principal son los siguientes:
+
+\subsubsection{UnivNet}
+La mayoría de los codificadores de voz neuronales emplean espectrogramas de mel de banda limitada para generar formas de onda. UnivNet, es un codificador neural de voz que sintetiza formas de onda de alta fidelidad en tiempo real. 
+
+Usando espectrogramas de mel de banda completa como entrada, se espera generar señales de alta resolución agregando un discriminador que emplea espectrogramas de múltiples resoluciones como entrada. En una evaluación de un conjunto de datos que contiene información sobre cientos de ponentes, UnivNet obtuvo los mejores resultados positivos, objetivos y subjetivos,  entre los modelos que competían. Estos resultados, incluida la mejor puntuación subjetiva en la conversión texto a voz, demuestran el potencial para una rápida adaptación a nuevos hablantes sin necesidad de entrenamiento desde cero[\cite{jang2021univnet}].
+
+\subsubsection{WaveGrad}
+
+WaveGrad es un modelo condicional para la generación de formas de onda que estima los gradientes de la densidad de datos. El modelo se basa en trabajos previos sobre emparejamiento de puntuaciones y modelos probabilísticos de difusión. Parte de una señal Gaussiana de ruido blanco e iterativamente refina la señal a través de un muestreador basado en gradientes, condicionado en el espectrograma de mel. WaveGrad ofrece una forma natural de intercambiar velocidad de referencia por calidad de la muestra ajustando el número de pasos de refinamiento, y cierra la brecha entre los modelos autorregresivos y no autorregresivos en términos de calidad de audio. El modelo puede generar muestras de audio de alta fidelidad usando como tan solo seis iteraciones. Los experimentos revelan que WaveGrad genera señales de audio de alta fidelidad, superando las líneas de base adversariales no autorregresivas y emparejando un fuertemente la línea de base autorregresiva basada en la probabilidad, utilizando menos operaciones secuenciales[\cite{chen2020wavegrad}].
+
+
+\section{Modelos de extremo a extremo}
+\subsection{VITS}
+
+Variational Inference with adversarial learning for end-to-end Text-to-Speech (VITS) es un método TTS de extremo a extremo en paralelo; usando un Autocodificador Variacional se conectan los dos módulos de sistemas TTS a través de variables latentes para permitir el aprendizaje de extremo a extremo. 
+
+Para mejorar el poder expresivo del método con el fin de sintetizar formas de onda de voz de alta calidad, se aplican flujos de normalización a la distribución condicional previa y entrenamiento adversarial en el dominio de formas de ondas.
+
+El modelo VITS se describe principalmente en tres partes: una formulación condicional de Autocodificador variacional; estimación de alineación derivada de la inferencia variacional; y entrenamiento adversarial para mejorar la calidad de la síntesis.
+
+(***No se si explicar cada parte)
+
+Luego de un proceso de entrenamiento, experimentación y comparación con sistemas de dos etapas, utilizando los modelos preentrenados Tacotron2 y Glow-TTS como modelos de primer escenario e HiFi-GAN como modelo de segundo escenario, se comprueba que VITS obtiene un habla que suena más natural, logra un MOS más alto. Ha mostrado la capacidad de ampliarse a la síntesis de voz de múltiples hablantes, generando un discurso con diversos tonos y ritmos de acuerdo a diferentes identidades de hablantes. Esto demuestra que aprende y expresa varias características del habla en un contexto de extremo a extremo.

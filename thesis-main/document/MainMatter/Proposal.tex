@@ -1,0 +1,53 @@
+\chapter{Propuesta}\label{chapter:proposal}
+
+Con el objetivo de lograr una síntesis de voz satisfactoria y después de realizar un estudio de las tecnologías que se utilizan para este fin, se elige Coqui TTS como herramienta base.
+
+Coqui cuenta con una gran variedad de modelos preentrenados en más de 20 idiomas, como primer paso se instala la biblioteca y se realiza un estudio del comportamiento de algunos de los modelos TTS y VoCoder disponibles para evaluar cuál ofrece mejores resultados:
+
+(Poner aqui los diagramitas)
+
+Los modelos \textbf{Tacotron2-DDC,Fast-pitch y Glow-tts} preentrenados en idioma inglés al combinarse con los VoCoders señalados en las figuras(citar figuras) para un texto en español arrojan un discurso con una pronunciación propia de una persona de habla inglesa hablando español.
+
+Coqui solo cuenta con un modelo preentrenado en español, el \textbf{Tacontron-DDC} entrenado sobre la base de Datos de MAI-Labs; el cual fue probado junto a los VoCoders preentrenados que se muestran en la figura X. Los mejores resultados fueron arrojados por el modelo Univnet entrenado sobre una base de datos Ljspeech y Wavegrad entrenado sobre el conjunto de datos LibriTTS, aunque ambos presentan problemáticas como la mala pronunciación de la letra ñ.\\
+
+De acuerdo con la documentación de Coqui, y con la problemática que consiste en desarrollar un sintetizador de voz en español, con voz cubana, se pueden considerar tres enfoques:
+
+\begin{enumerate}
+	\item Realizar un \textit{fine-tuning} o reentrenamiento a un modelo preentrenado, en este caso \textbf{Tacontron-DDC}, que es el único disponible en español. 
+	
+	\item Realizar el entrenamiendo desde cero, en este caso se podría entrenar cualquier modelo. \textbf{Glow-TTS y VITS} son buenos candidatos pues generan resultados bastante buenos. Una desventaja es que cae una gran responsabilidad sobre el conjunto de datos de entrenamiento, pues debe tener una gran riqueza y muchos clips de audio.
+	
+	\item La problemática del tamaño de la base de datos puede resolverse entrenando el modelo \textbf{YourTTS}, que según la literatura, es capaz de adaptarse a una nueva voz con muy poco tiempo de audio.
+\end{enumerate}
+
+Luego de tener entrenado el modelo acústico(tts) con una base de datos construida con voces cubanas, es posible que alguno de los VoCoders preentrenados disponibles produzca una salida con las características deseadas, en caso contrario se debería entrenar el VoCoder con los datos del \textit{dataset} construido.\\
+
+Se propone desarrollar el primer enfoque: reentrenando el modelo \textbf{Tacontron-DDC} en español. Este camino trae ventajas tales como un aprendizaje más rápido, ya que un modelo preentrenado ya tiene aprendidas funcionalidades que son relevantes para la tarea de producir un discurso. Convergerá más rápido en el nuevo \textit{dataset}, lo que reducirá el costo de entrenamiento y permitirá el proceso de experimentación más rápidamente. Además se pueden obtener buenos resultados con un conjunto de datos más pequeño.  
+
+\section{Reentrenamiendo Tacontron-DDC}
+
+El reentrenamiento(\textit{fine-tuning} en inglés), toma un modelo previamente entrenado y lo vuelve a entrenar para mejorar su rendimiento en una tarea o conjunto de datos diferente.
+
+\subsection{Creación de la base de datos}
+
+En primera instancia se debe construir una base con voces cubanas. El conjunto de datos debe poseer un formato específico para que el cargador de datos de Coqui TTS sea capaz de   
+
+           
+
+
+
+
+
+
+
+
+
+
+
+	
+
+
+
+
+%Se escoge el enfoque que divide la síntesis de voz en dos etapas.
+

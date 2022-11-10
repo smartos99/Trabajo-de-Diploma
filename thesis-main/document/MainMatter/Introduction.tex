@@ -1,0 +1,86 @@
+\chapter*{Introducción}\label{chapter:introduction}
+\addcontentsline{toc}{chapter}{Introducción}
+
+La era de la informática conversacional está cambiando la forma en la que interactuamos con nuestros dispositivos: el Asistente de Google busca en Internet y lee las instrucciones sobre cómo preparar un pastel, Siri nos guía en la búsqueda de un lugar desconocido, las líneas automatizadas de servicio al cliente operan sin necesidad de esperas o botones; todo esto es posible gracias a la tecnología digital llamada texto a voz o TTS por sus siglas en inglés. \\
+
+
+La síntesis de voz es la producción artificial del habla humana, se han diseñado diferentes
+sistemas para este propósito, llamados sintetizadores de voz y pueden ser implementados tanto
+en hardware como en software. 
+
+Un sistema TTS (text to speech) o sintetizador de voz toma como entrada texto y produce voz audible como salida. Este sistema de conversión, se compone básicamente por dos componentes: un modelo que predice generalmente en forma de espectograma la mejor pronunciación posible de cualquier texto dado, y un codificador de voz que, a partir del espectograma anterior produce ondas sonoras de voz.\\
+
+El \textit{texto a voz} es un campo particularmente disciplinario, que requiere un conocimiento
+detallado en una variedad de ciencias. Si se quisiera construir un sistema TTS desde cero, se tendrían que estudiar los siguientes temas:
+
+\begin{itemize}
+	\item Lingüística, el estudio científico del lenguaje. Para sintetizar un habla coherente, los sistemas TTS necesitan reconocer cómo un hablante humano pronuncia el lenguaje escrito; esto requiere conocimientos de lingüística hasta el nivel del fonema: las unidades de sonido que combinadas producen el habla, como el sonido /t/ en tierra. Para lograr un TTS verdaderamente realista, el sistema también necesita predecir la prosodia apropiada,que incluye elementos del habla más allá del fonema, como acentos, pausas y entonación.
+	
+	\item Procesamiento de señales de audio, creación y manipulación de representaciones digitales de sonido. Las señales de audio (habla) son representaciones electrónicas de ondas sonoras. La señal de voz se representa digitalmente como una secuencia de números. En el contexto de TTS se utilizan diferentes representaciones de características que describen la señal del habla, lo que hace posible entrenar diversos modelos para generar una nueva voz.
+	
+	\item Inteligencia artificial, especialmente aprendizaje profundo, un tipo de aprendizaje automático que utiliza una arquitectura informática llamanda red neuronal profunda o DNN por sus siglas en inglés. Una red neuronal es un modelo computacional inspirado en el cerebro humano. Está formado por redes complejas de procesadores, cada uno de los cuales realiza una serie de operaciones antes de enviar su salida a otro procesador. Una DNN capacitada aprende la mejor vía de procesamiento para lograr resultados precisos. Este modelo tiene una gran potencia informática, lo que lo hace ideal para manejar la gran cantidad de variables necesarias para la síntesis de voz de alta calidad.
+\end{itemize}
+
+\subsubsection*{Tipos de tecnologías TTS}
+
+Hasta la actualidad se han desarrollado variadas tecnologías TTS, las cuales operan de maneras distintas y se basan en diferentes ideas. Entre las más dominantes se encuentran: 
+
+\begin{enumerate}
+	\item  Síntesis de formantes y síntesis articulatoria: \\Los primeros sistemas TTS empleaban tecnologías basadas en reglas, como la \textit{síntesis de formantes} y la \textit{síntesis articulatoria}, que logró un resultado similar a través de estrategias ligeramente diferentes. A partir de una grabación realizada a un hablante, se extrajeron características acústicas de este: formantes, cualidades definitorias de los sonidos del habla, en síntesis de formantes; y forma de articulación (nasal, oclusiva,vocal,etc.) en síntesis articulatoria. Luego, se programarían reglas que recrearan estos parámetros con una señal de audio digital. Este TTS era bastante robótico; y estos enfoques necesariamente abstraen gran parte de la variación que se encontrará en el habla humana, cosas como la variación de tono, porque solo permiten a los programadores escribir reglas para unos pocos parámetros a la vez.
+	
+	\item Síntesis de difonos: \\ El próximo gran desarrollo en el campo TTS se llama \textit{síntesis de difonos}, se inició en la década de 1970 y todavía era de uso popular durante los últimos años del siglo XX. La síntesis de difonos crea  un habla de máquina mediante la combinación de difonos, combinaciones de fonemas de una sola unidad, y las transiciones de un fonema al siguiente; es decir, no solo la /t/ en la palabra tierra sino la /t/ más la mitad del siguiente sonido /i/. 
+	
+	La tecnología TTS de síntesis de difonos incluye también modelos que predicen la duración y el tono de cada difono para la entrada dada. Estos dos sistemas se superponen el uno sobre el otro, primero conecta las señales de difono y luego procesa la señal para corregir el tono y la duración. El resultado es un discurso  sintético con un sonido más natural que el que crea la síntesis de formantes, pero aún está lejos de ser perfecto, y tiene pocas ventajas sobre cualquier otro acercamiento más que su tamaño. 
+	
+	\item Síntesis de selección de unidades: \\ La \textit{síntesis de selección de unidades}, constituye un enfoque ideal para los motores TTS de bajo impacto en la actualidad. Cuando la síntesis de difonos añadió duración y el tono apropiado a través de un segundo sistema de procesamiento, la síntesis de selección de unidad omite ese paso: se inicia con una gran base de datos grabados del habla, alrededor de 20 horas o más, y selecciona los fragmentos de sonido que ya tienen la duración y el tono. La síntesis de selección de unidades proporciona un habla similar a la humana sin mucha modificación de la señal, pero sigue siendo identificablemente artificial. Probablemente el audio de salida de la mejor selección de unidades sea indistinguible de las voces humanas reales, especialmente en contextos con sistemas TTS. Sin embargo, un mayor naturalidad requiere de bases de datos de selección de unidades muy grandes, en algunos sistemas llegando a ser de gigabytes de datos grabados, representando docenas de horas de voz. 
+	
+	\item Síntesis neuronal: \\ La tecnología de las redes neuronales profundas es la que impulsa los avances actuales en el campo TTS, y es clave para la obtención de resultados mucho más realistas. Al igual que sus predecesores, el TTS neuronal comienza con grabaciones de voz; la otra entrada es texto, el guión escrito que su locutor de origen utilizó para crear esas grabaciones. Alimente estas entradas en una red neuronal profunda y aprenderá el mejor mapeo posible entre un bit de texto y las características acústicas asociadas. 
+	
+	Una vez que el modelo esté entrenado, podrá predecir sonido realista para nuevos textos: con un modelo TTS neuronal entrenado, junto con un codificador de voz entrenado con los mismos datos, el sistema puede producir un habla que es notablemente similar a la del locutor de origen cuando se expone a prácticamente cualquier texto nuevo. Esa similitud entre la fuente y la salida	es la razón por la que el TTS neuronal a veces se denomina “clonación de voz”.
+	
+	Hay todo tipo de trucos de procesamiento de señales que pueden ser utilizados para alterar la voz sintética resultante y no se asemeje al locutor fuente. La investigación actual está	conduciendo a voces TTS que hablan con expresión emocional, voces únicas en varios idiomas y una calidad de audio cada vez más realista.
+\end{enumerate}
+
+Entre algunos de los poderosos casos de uso de TTS en el mundo actual se encuentran:
+
+\begin{itemize}
+	\item Sistemas de respuesta de voz interactiva conversacional (IVR), como en los centros de llamadas de servicio al cliente.
+	
+	\item Aplicaciones de comercio de voz, como comprar en un dispositivo Amazon Alexa.
+	\item Herramientas de navegación y guía por voz, como aplicaciones de mapas GPS.
+	\item Dispositivos domésticos inteligentes y otras herramientas de Internet de las cosas (IoT) habilitadas por voz.
+	\item Asistentes virtuales independientes como Siri de Apple.
+	\item Soluciones de publicidad y marketing experiencial, como anuncios de voz interactivos en servicios de transmisión de música.
+	\item Desarrollo de videojuegos.
+	\item Videos de marketing y formación de la empresa que permiten a los creadores cambiar las	voces en off sin identificar al locutor.
+\end{itemize}
+
+\section*{Problemática}
+Existe un conjunto de sistemas TTS que se enmarcan bajo una licencia de software libre:
+\begin{itemize}
+	\item Festival y Festvox
+	\item Plataforma MaryTTS
+	\item Sistema TTS
+	\item SV2TTS
+	\item Mozilla-TTS
+	\item COQUI -TTS
+\end{itemize}
+
+
+A partir del estudio parcial de las plataformas de código abierto utilizadas para el desarrollo de conversores de texto a voz, fue posible comprobar que la mayoría se encuentran basadas en la síntesis neuronal teniendo en cuenta que alcanza mejores resultados. Estas plataformas brindan modelos previamente entrenados para idiomas específicos como inglés, francés, alemán, etc. Muy pocas presentan un modelo en español, y las que lo hacen solo poseen uno, con acento de voz española o voz neutra.\\
+
+DATYS, es una empresa de desarrollo de software, que como parte de sus soluciones requiere un sintetizador de voz en español con acento propio de nuestro país; esto formará parte de un proyecto que consiste en el desarrollo del primer asistente virtual cubano. 
+
+\section*{Objetivo}
+
+\subsection*{Objetivo General}
+
+Desarrollar un sintetizador de texto a voz con voces cubanas.
+
+\subsection*{Objetivos específicos}
+\begin{enumerate}
+	\item Analizar en profundidad los métodos y plataformas existentes para la síntesis de voz, principalmente las que trabajan sobre la síntesis neuronal, y seleccionar el más adecuado a utilizar para las aplicaciones de DATYS.
+	\item Diseñar y conformar una base de datos en español, con con voces cubanas para el entrenamiento de los modelos y muestras de voz que se desea generar.
+	\item Reentrenar el modelo basado en síntesis neuronal seleccionado, para su ajuste al estilo de voz cubana.
+	\item Evaluar.
+\end{enumerate}
