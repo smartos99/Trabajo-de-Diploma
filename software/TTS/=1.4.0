@@ -1,0 +1,6 @@
+Collecting scipy
+  Downloading https://files.pythonhosted.org/packages/24/40/11b12af7f322c1e20446c037c47344d89bab4922b8859419d82cf56d796d/scipy-1.2.3-cp27-cp27mu-manylinux1_x86_64.whl (24.8MB)
+Collecting numpy>=1.8.2 (from scipy)
+  Using cached https://files.pythonhosted.org/packages/3a/5f/47e578b3ae79e2624e205445ab77a1848acdaa2929a00eeef6b16eaaeb20/numpy-1.16.6-cp27-cp27mu-manylinux1_x86_64.whl
+Installing collected packages: numpy, scipy
+Successfully installed numpy-1.16.6 scipy-1.2.3
