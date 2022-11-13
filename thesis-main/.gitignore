@@ -6,7 +6,6 @@
 *.log
 *.lot
 *.out
-*.pdf
 !document/Graphics/uhlogo.pdf
 *.backup
 *.toc
