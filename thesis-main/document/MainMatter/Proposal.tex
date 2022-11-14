@@ -32,7 +32,7 @@ El reentrenamiento(\textit{fine-tuning} en inglés), toma un modelo previamente 
 
 Para entrenar un modelo TTS, se necesita un conjunto de datos con grabaciones y transcripciones de voz, en este caso fue una base de datos en español con voces cubanas. El discurso debe dividirse en clips de audio y cada clip necesita su transcripción correspondiente. Debe poseer un formato específico de forma tal que el cargador de datos de Coqui TTS sea capaz de cargarlos para utilizar en el entrenamiento.    
 
-La base de datos conformanda debe tener una buena cobertura del idioma en el que se desea entrenar el modelo, en este caso el Español. Debe cubrir la variedad fonémica, los sonidos excepcionales y las sílabas. 
+La base de datos conformanda debe tener una buena cobertura del idioma en el que se desea entrenar el modelo. Debe cubrir la variedad fonémica, los sonidos excepcionales y las sílabas. 
 
 \subsubsection{Qué hace a un buen Dataset?}
 
@@ -44,7 +44,7 @@ La base de datos conformanda debe tener una buena cobertura del idioma en el que
 	
 \end{itemize}
 
-Los clips de audio poseen formato .wav con una frecuencia de 16000Hz, y se organizan dentro de una carpeta de nombre \textit{wavs} de la siguiente forma:
+Los clips de audio poseen formato .wav y se organizan dentro de una carpeta de nombre \textit{wavs} de la siguiente forma:
 
 \begin{center}
 	/wavs\\
