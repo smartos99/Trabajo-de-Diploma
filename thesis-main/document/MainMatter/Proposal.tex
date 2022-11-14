@@ -30,7 +30,7 @@ El reentrenamiento(\textit{fine-tuning} en inglés), toma un modelo previamente 
 
 \subsection{Creación de la base de datos}
 
-Para entrenar un modelo TTS, se necesita un conjunto de datos con grabaciones y transcripciones de voz, en este caso fue una base de datos en español con voces cubanas. El discurso debe dividirse en clips de audio y cada clip necesita su transcripción correspondiente. Debe poseer un formato específico de forma tal que el cargador de datos de Coqui TTS sea capaz de cargarlos para utilizar en el entrenamiento.    
+Para entrenar un modelo TTS, se necesita un conjunto de datos con grabaciones de voz y transcripciones, en este caso fue una base de datos en español con voces cubanas. El discurso debe dividirse en clips de audio y cada clip necesita su transcripción correspondiente. Debe poseer un formato específico de forma tal que el cargador de datos de Coqui TTS sea capaz de cargarlos para utilizar en el entrenamiento.    
 
 La base de datos conformanda debe tener una buena cobertura del idioma en el que se desea entrenar el modelo. Debe cubrir la variedad fonémica, los sonidos excepcionales y las sílabas. 
 
@@ -76,10 +76,21 @@ El modelo sobre el que realizaremos el ajuste, está preentrenado sobre la base 
 	
 	|metadata.csv
 \end{flushleft}
+
+El proceso de \textit{fine-tuning} consiste en modificar la configuración original del modelo preentrenado seleccionado: establecer la base de datos que se utiliza para el reentrenamiento; los detalles acústicos que reflejen las características del nuevo conjunto de datos; el nombre del nuevo modelo ajustado; la dirección donde se guardará el modelo reentrenado, entre otras cuestiones. Para la mayoría de los parámetros se tomaron las características del modelo original \textbf{Tacontron-DDC} en español.
+
+
+
+
 	
 	
 
-
+%Are 100 audio samples sufficient?
+%What should be the appropriate learning rate?
+%What is the recommended length (no of characters) of each audio sample?
+%Should we make any changes to batch size and number of epochs also? (Currently defaults in config file are 64 and 1000 respectively)
+%Any other changes which should be done in the config.json file?
+%Is tts_models--en--ljspeech--tacotron2-DDC_ph a good model to fine tune for custom voice?
 
 
 
