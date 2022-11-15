@@ -6,7 +6,7 @@ Las redes neuronales han sido las encargadas de los avances actuales en el campo
 Coqui TTS[\cite{coqui-doc}] es una biblioteca para la generación avanzada de texto a voz. Se basa en las últimas investigaciones y se diseñó para lograr el mejor equilibrio entre la facilidad de entrenamiento, la velocidad y la calidad. Coqui viene con modelos preentrenados, herramientas para medir la calidad del conjunto de datos y ya se utiliza en más de 20 idiomas para productos y proyectos de investigación.
 
 
-Para lograr la transformación de texto a voz, Coqui sigue dos enfoques distintos: el primero es un sistema de dos estapas: una combinación de dos modelos, uno para convertir de texto a espectograma de mel, y luego otro de espectograma a onda sonora; y el segundo es un modelo de extremo a extremo.  
+Para lograr la transformación de texto a voz, Coqui sigue dos enfoques distintos. El primero es un sistema de dos estapas: una combinación de dos modelos, uno para convertir de texto a espectograma de mel, y luego otro de espectograma a onda sonora; y el segundo es un modelo de extremo a extremo.  
 
 \section{Sistemas de dos etapas}
 
@@ -132,12 +132,20 @@ WaveGrad es un modelo condicional para la generación de formas de onda que esti
 \section{Modelos de extremo a extremo}
 \subsection{VITS}
 
-Variational Inference with adversarial learning for end-to-end Text-to-Speech (VITS) es un método TTS de extremo a extremo en paralelo; usando un Autocodificador Variacional se conectan los dos módulos de sistemas TTS a través de variables latentes para permitir el aprendizaje de extremo a extremo. 
+\textit{Variational Inference with adversarial learning for end-to-end Text-to-Speech (VITS)} es un método TTS de extremo a extremo en paralelo. Usando un Autocodificador Variacional se conectan los dos módulos de sistemas TTS: modelo acústico y VoCoder, a través de variables latentes para permitir el aprendizaje de extremo a extremo. 
 
 Para mejorar el poder expresivo del método con el fin de sintetizar formas de onda de voz de alta calidad, se aplican flujos de normalización a la distribución condicional previa y entrenamiento adversarial en el dominio de formas de ondas.
 
-El modelo VITS se describe principalmente en tres partes: una formulación condicional de Autocodificador variacional; estimación de alineación derivada de la inferencia variacional; y entrenamiento adversarial para mejorar la calidad de la síntesis.
+El modelo VITS se describe principalmente en tres etapas: una formulación condicional de Autocodificador variacional; estimación de alineación derivada de la inferencia variacional; y entrenamiento adversarial para mejorar la calidad de la síntesis.
 
 (***No se si explicar cada parte)
 
-Luego de un proceso de entrenamiento, experimentación y comparación con sistemas de dos etapas, utilizando los modelos preentrenados Tacotron2 y Glow-TTS como modelos de primer escenario e HiFi-GAN como modelo de segundo escenario, se comprueba que VITS obtiene un habla que suena más natural, logra un MOS más alto. Ha mostrado la capacidad de ampliarse a la síntesis de voz de múltiples hablantes, generando un discurso con diversos tonos y ritmos de acuerdo a diferentes identidades de hablantes. Esto demuestra que aprende y expresa varias características del habla en un contexto de extremo a extremo.
+
+
+Luego de un proceso de entrenamiento, experimentación y comparación con sistemas de dos etapas, utilizando los modelos preentrenados Tacotron2 y Glow-TTS como modelos de primer escenario e HiFi-GAN como modelo de segundo escenario, se comprueba que VITS obtiene un habla que suena más natural. Una evaluación humana subjetiva (puntuación de opinión media, o MOS) en LJ Speech, un conjunto de datos de un solo hablante, muestra que el modelo supera a los mejores sistemas TTS disponibles públicamente y logra un MOS comparable a la realidad del terreno.
+
+Ha mostrado la capacidad de ampliarse a la síntesis de voz de múltiples hablantes, generando un discurso con diversos tonos y ritmos de acuerdo a diferentes identidades de hablantes. Esto demuestra que aprende y expresa varias características del habla en un contexto de extremo a extremo.
+
+
+
+%Nuestro método adopta la inferencia variacional aumentada con flujos de normalización y un proceso de entrenamiento contradictorio, que mejora el poder expresivo del modelado generativo. También proponemos un predictor de duración estocástico para sintetizar el habla con diversos ritmos a partir del texto de entrada. Con el modelo de incertidumbre sobre las variables latentes y el predictor de duración estocástica, nuestro método expresa la relación natural de uno a muchos en la que una entrada de texto se puede hablar de múltiples maneras con diferentes tonos y ritmos.
