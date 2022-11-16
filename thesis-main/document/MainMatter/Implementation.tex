@@ -1,12 +1,70 @@
 \chapter{Detalles de Implementación y Experimentos}\label{chapter:implementation}
 
+\section{Instalación de la biblioteca Coqui}
+Coqui [\cite{coqui-doc}] es un repositorio de código abierto que implementa las últimas investigaciones en materia de síntesis de voz, como Tacotron 2 y VITS que son los modelos base utilizados en el presente proyecto. Este repositorio ha sido usado para generar modelos en más de 20 idiomas  y cuenta además con múltiples "recetas" para el entrenamiento de modelos. 
+
+La biblioteca se instala de acuerdo a las instrucciones orientadas a desarrolladores en [\cite{coqui-doc}].
+Con esto ya es suficiente para probar los modelos preentrenados disponibles de Coqui.
+
 
 \section{Creación de base de datos con voces cubanas.}
 
-\textbf{Cuban Voice Dataset}\\
-La base de datos está conformada por 160 clips de audio con sus respectivas transcripciones recogidas en el archivo metadata.csv. Cada clip tiene una duración de 2 a 15 segundos. 
+\subsubsection{Qué hace a un buen Dataset?}
 
-Utilizando \textbf{RNNoise}, la cual es una biblioteca basada en una red neuronal para la eliminación de ruido en grabaciones, obtenemos clips de audio libres de ruidos y con la frecuencia de muestreo deseada.
+\begin{itemize}
+	\item Debe cubrir una cantidad considerable de clips cortos y largos.
+	\item Libre de errores. Se debe eliminar cualquier archivo incorrecto o roto. 
+	\item Para escuchar una voz con la mayor naturalidad posible con todas las diferencias de frecuencia y tono, por ejemplo, usando diferentes signos de puntuación.
+	\item Es necesario que el \textit{dataset} cubra una buena parte de fonemas, difonemas y, en algunos idiomas, trifonemas. Si la cobertura de fonemas es baja, el modelo puede tener dificultades para pronunciar nuevas palabras difíciles.
+	
+\end{itemize}
+
+\textbf{Cuban Voice Dataset}\\
+La base de datos está conformada por 160 clips de audio con sus respectivas transcripciones recogidas en el archivo metadata.csv. Cada clip tiene una duración de 2 a 15 segundos, no más, para evitar sobrecargar los métodos que tienen que ver con la alineación.\\
+
+Los clips de audio poseen formato .wav y se organizan dentro de una carpeta de nombre \textit{wavs} de la siguiente forma:
+
+\begin{center}
+	/wavs\\
+	| - audio1.wav\\
+	| - audio1.wav\\
+	| - audio2.wav\\
+	| - audio3.wav\\
+	...
+\end{center}
+
+Las transcripciones se recogen dentro del archivo metadata.csv. Donde audio1, audio2, etc se refieren a los archivos audio1.wav, audio2.wav etc.
+
+\begin{center}
+	audio1|Esta es mi transcripción 1.
+	
+	audio2|Esta es mi transcripción 2.
+	
+	audio3|Esta es mi transcripción 3.
+	
+	audio4|Esta es mi transcripción 4.
+\end{center}
+
+El modelo sobre el que realizaremos el ajuste, está preentrenado sobre la base de datos en Español de \textit{The M-AiLabs Speech Dataset}, por tanto utilizaremos la misma estructura de este en la conformación de la base de datos con voces cubanas. Finalmente quedando la siguiente estructura:
+
+\begin{flushleft}
+	MyDataset/by$\_$book/female/[creador del dataset]/[nombre del hablante]
+	
+	|/wavs
+	
+	|metadata.csv
+\end{flushleft}
+
+
+
+
+
+
+\subsection{Procesamiento de audio}
+
+\textbf{RNNoise} es una biblioteca basada en una red neuronal para la eliminación de ruido en grabaciones, se utliza en este proyecto para obtener clips de audio libres de ruidos y con la frecuencia de muestreo deseada.
+
+Se realiza 
 
 
 

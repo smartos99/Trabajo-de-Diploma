@@ -14,24 +14,24 @@ El primer paso en el desarrollo del sintetizador fue instalar la biblioteca Coqu
 	\centering
 	\includegraphics[width=0.3\linewidth]{Graphics/en_ljspeech}
 	\caption{Modelo TTS Tacotron2-DDC entrenado en Inglés}
-	\label{fig:enljspeech}
+	\label{enljspeech}
 \end{figure}
 
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.3\linewidth]{Graphics/fastpitch}
 	\caption{Modelo TTS Fast-Pitch entrenado en Inglés}
-	\label{fig:fastpitch}
+	\label{fastpitch}
 \end{figure}
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.4\linewidth]{Graphics/glow_tts}
 	\caption{Modelo TTS Glow-TTS entrenado en Inglés}
-	\label{fig:glowtts}
+	\label{glowtts}
 \end{figure}
 
 
-Los modelos \textbf{Tacotron2-DDC, Fast-pitch y Glow-tts} preentrenados en idioma inglés al combinarse con VoCoders, como se observa en las figuras(citar figuras) para un texto en español arroja distintos resultados, en algunos casos solo producen ruido mientras que los más satisfactorios, producen un discurso con una pronunciación propia de una persona de habla inglesa hablando español.
+Los modelos \textbf{Tacotron2-DDC, Fast-pitch y Glow-tts} preentrenados en idioma inglés al combinarse con VoCoders, como se observa en las figuras \ref{enljspeech}, \ref{fastpitch}, \ref{glowtts} para un texto en español arroja distintos resultados, en algunos casos solo producen ruido mientras que los más satisfactorios, producen un discurso con una pronunciación propia de una persona de habla inglesa hablando español.
 
 Por otro lado Coqui solo cuenta con un modelo preentrenado en español, el \textbf{Tacontron-DDC}, que está entrenado sobre la base de datos de M-AILABS[\cite{mailabs}]; este modelo fue probado junto a los VoCoders preentrenados como se muestra en la figura \ref{esmai}. Los mejores resultados fueron arrojados por las combinaciones de \textbf{Tacontron-DDC} con los modelos: Univnet entrenado sobre la base de datos Ljspeech en inglés, y Wavegrad entrenado sobre el conjunto de datos LibriTTS, aunque ambos presentan problemáticas como la mala pronunciación de la letra ñ.\\
 
@@ -54,48 +54,6 @@ Para entrenar un modelo TTS, se necesita un conjunto de datos con grabaciones de
 
 La base de datos conformanda debe tener una buena cobertura del idioma en el que se desea entrenar el modelo. Debe cubrir la variedad fonémica, los sonidos excepcionales y las sílabas. 
 
-\subsubsection{Qué hace a un buen Dataset?}
-
-\begin{itemize}
-	\item Debe cubrir una cantidad considerable de clips cortos y largos.
-	\item Libre de errores. Se debe eliminar cualquier archivo incorrecto o roto. 
-	\item Para escuchar una voz con la mayor naturalidad posible con todas las diferencias de frecuencia y tono, por ejemplo, usando diferentes signos de puntuación.
-	\item Es necesario que el \textit{dataset} cubra una buena parte de fonemas, difonemas y, en algunos idiomas, trifonemas. Si la cobertura de fonemas es baja, el modelo puede tener dificultades para pronunciar nuevas palabras difíciles.
-	
-\end{itemize}
-
-Los clips de audio poseen formato .wav y se organizan dentro de una carpeta de nombre \textit{wavs} de la siguiente forma:
-
-\begin{center}
-	/wavs\\
-	| - audio1.wav\\
-	| - audio1.wav\\
-	| - audio2.wav\\
-	| - audio3.wav\\
-	...
-\end{center}
-
-Las transcripciones se recogen dentro del archivo metadata.csv. Donde audio1, audio2, etc se refieren a los archivos audio1.wav, audio2.wav etc.
-
-\begin{center}
-	audio1|Esta es mi transcripción 1.
-	
-	audio2|Esta es mi transcripción 2.
-	
-	audio3|Esta es mi transcripción 3.
-	
-	audio4|Esta es mi transcripción 4.
-\end{center}
-
-El modelo sobre el que realizaremos el ajuste, está preentrenado sobre la base de datos en Español de \textit{The M-AiLabs Speech Dataset}, por tanto utilizaremos la misma estructura de este en la conformación de la base de datos con voces cubanas. Finalmente queda la siguiente estructura:
-
-\begin{flushleft}
-	MyDataset/by$\_$book/female/[creador del dataset]/[nombre del hablante]
-	
-	|/wavs
-	
-	|metadata.csv
-\end{flushleft}
 
 \section{Reentrenamiendo para el ajuste de Tacontron-DDC}
 
