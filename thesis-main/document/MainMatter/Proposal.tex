@@ -40,7 +40,7 @@ De acuerdo con la documentación de Coqui, y con el objetivo de la investigació
 \begin{enumerate}
 	\item Realizar un \textit{fine-tuning} o reentrenamiento a un modelo preentrenado de [\cite{coqui-doc}], en este caso \textbf{Tacontron-DDC}, que es el único disponible en español. 
 	
-	\item Realizar el entrenamiendo desde cero de un modelo; en este caso se podría entrenar cualquier modelo disponible. \textbf{Glow-TTS y VITS} son buenos candidatos pues en general producen resultados bastante satisfactorios.% Una desventaja es que cae una gran responsabilidad sobre el conjunto de datos de entrenamiento, pues debe tener una gran riqueza y muchos clips de audio.
+	\item Realizar el entrenamiendo desde cero de un modelo; en este caso se podría entrenar cualquier modelo disponible. \textbf{Glow-TTS y VITS} son buenos candidatos pues en general producen resultados bastante satisfactorios.
 	
 	\item La problemática del tamaño de la base de datos puede resolverse entrenando el modelo \textbf{YourTTS}, que según la literatura, es capaz de adaptarse a una nueva voz con muy poco tiempo de audio.
 \end{enumerate}
@@ -99,7 +99,7 @@ El modelo sobre el que realizaremos el ajuste, está preentrenado sobre la base 
 
 \section{Reentrenamiendo para el ajuste de Tacontron-DDC}
 
-Se propone desarrollar el primer enfoque: reentrenando(\textit{fine-tuning} en inglés) el modelo \textbf{Tacontron-DDC} en español, pues trae ventajas tales como un aprendizaje más rápido, ya que un modelo preentrenado ya tiene aprendidas funcionalidades que son relevantes para la tarea de producir un discurso. Convergerá más rápido en el nuevo \textit{dataset}, lo que reducirá el costo de entrenamiento y permitirá el proceso de experimentación más rápidamente. Además se pueden obtener buenos resultados con un conjunto de datos más pequeño.  \\
+Se propone desarrollar el primer enfoque: reentrenando(\textit{fine-tuning} en inglés) el modelo \textbf{Tacontron-DDC} en español, pues trae ventajas tales como un aprendizaje más rápido, ya que un modelo preentrenado ya tiene aprendidas funcionalidades que son relevantes para la tarea de producir un discurso. Convergerá más rápido en el nuevo \textit{dataset}, lo que reducirá el costo de entrenamiento y permitirá el proceso de experimentación más rápidamente. Además se pueden obtener buenos resultados con un conjunto de datos más pequeño.\\
 
 Luego de tener entrenado el modelo acústico(tts) con una base de datos construida con voces cubanas, es posible que alguno de los VoCoders preentrenados disponibles produzca una salida con las características deseadas, en caso contrario se debería entrenar el VoCoder con los datos del \textit{dataset} construido.
 
@@ -123,7 +123,7 @@ Existen varios modelos de texto a voz de extremo a extremo que permiten el entre
 
 Se selecciona VITS porque es un método TTS paralelo de extremo a extremo que genera un sonido de audio más natural que los modelos actuales de dos etapas. Y de acuerdo a una evaluación humana subjetiva (puntuación de opinión media, o MOS), muestra que el modelo supera a los mejores sistemas TTS disponibles públicamente y logra un MOS comparable a la realidad del terreno.
 
-
+Con este enfoque se debe entrenar la red neuronal de VITS partiendo de cero. Una desventaja es que cae una gran responsabilidad sobre el conjunto de datos de entrenamiento, pues debe tener una gran riqueza y muchos clips de audio.
 	
 	
 
