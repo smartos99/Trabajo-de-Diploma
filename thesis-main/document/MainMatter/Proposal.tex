@@ -3,12 +3,7 @@
 Con el objetivo de lograr una síntesis de voz satisfactoria y después de realizar un estudio de las tecnologías que se utilizan para este fin, se elige Coqui TTS como herramienta base. Coqui cuenta con una gran variedad de modelos preentrenados en más de 20 idiomas.  
 El primer paso en el desarrollo del sintetizador fue instalar la biblioteca Coqui TTS, de acuerdo a las indicaciones del repositorio oficial[\cite{coqui-doc}]. Se realizó un estudio del comportamiento de combinaciones de parejas modelo TTS y VoCoder, para evaluar cuáles ofrecían mejores resultados:
 
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.7\linewidth]{Graphics/es_mai}
-	\caption{Modelo TTS Tacotron2-DDC entrenado en Español}
-	\label{esmai}
-\end{figure}
+
 
 \begin{figure}[H]
 	\centering
@@ -30,6 +25,13 @@ El primer paso en el desarrollo del sintetizador fue instalar la biblioteca Coqu
 	\label{glowtts}
 \end{figure}
 
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\linewidth]{Graphics/es_mai}
+	\caption{Modelo TTS Tacotron2-DDC entrenado en Español}
+	\label{esmai}
+\end{figure}
+
 
 Los modelos \textbf{Tacotron2-DDC, Fast-pitch y Glow-tts} preentrenados en idioma inglés al combinarse con VoCoders, como se observa en las figuras \ref{enljspeech}, \ref{fastpitch}, \ref{glowtts} para un texto en español arroja distintos resultados, en algunos casos solo producen ruido mientras que los más satisfactorios, producen un discurso con una pronunciación propia de una persona de habla inglesa hablando español.
 
@@ -48,9 +50,18 @@ De acuerdo con la documentación de Coqui, y con el objetivo de la investigació
 Para el desarrollo de cualquiera de los anteriores es imprescindible la construcción de un conjunto de datos que se adapten al modelo y a las necesidades de la investigación.
 
 
-\section{Creación de la base de datos [\cite{formatting-dataset}]}
+\section{Creación de la base de datos}
 
-Para entrenar un modelo TTS, se necesita un conjunto de datos con grabaciones de voz y transcripciones, en este caso fue una base de datos en español con voces cubanas. El discurso debe dividirse en clips de audio y cada clip necesita su transcripción correspondiente. Debe poseer un formato específico de forma tal que el cargador de datos de Coqui TTS sea capaz de cargarlos para utilizar en el entrenamiento.    
+Para entrenar un modelo TTS, se necesita un conjunto de datos con grabaciones de voz y transcripciones, en este caso fue una base de datos en español con voces cubanas. El discurso debe dividirse en clips de audio y cada clip necesita su transcripción correspondiente. La base de datos debe poseer una organización específica, que se eligirá luego, de forma tal que el cargador de datos de Coqui TTS sea capaz de cargarlos para utilizar en el entrenamiento[\cite{formatting-dataset}].    
+
+\subsubsection{Formato wav}
+(***)
+
+
+
+\subsubsection{Hablar del idioman español}
+(***)\\
+
 
 La base de datos conformanda debe tener una buena cobertura del idioma en el que se desea entrenar el modelo. Debe cubrir la variedad fonémica, los sonidos excepcionales y las sílabas. 
 
@@ -59,7 +70,7 @@ La base de datos conformanda debe tener una buena cobertura del idioma en el que
 
 Se propone desarrollar el primer enfoque: reentrenando(\textit{fine-tuning} en inglés) el modelo \textbf{Tacontron-DDC} en español, pues trae ventajas tales como un aprendizaje más rápido, ya que un modelo preentrenado ya tiene aprendidas funcionalidades que son relevantes para la tarea de producir un discurso. Convergerá más rápido en el nuevo \textit{dataset}, lo que reducirá el costo de entrenamiento y permitirá el proceso de experimentación más rápidamente. Además se pueden obtener buenos resultados con un conjunto de datos más pequeño.\\
 
-Luego de tener entrenado el modelo acústico(tts) con una base de datos construida con voces cubanas, es posible que alguno de los VoCoders preentrenados disponibles produzca una salida con las características deseadas, en caso contrario se debería entrenar el VoCoder con los datos del \textit{dataset} construido.
+Luego de tener entrenado el modelo acústico(TTS) con una base de datos construida con voces cubanas, es posible que alguno de los VoCoders preentrenados disponibles produzca una salida con las características deseadas, en caso contrario se debería entrenar el VoCoder con los datos del \textit{dataset} construido.
 
 \subsection{Fine-Tuning}
 Entrenar correctamente un modelo de aprendizaje profundo requiere generalmente de una gran base de datos y de un extenso entrenamiento.
@@ -83,6 +94,12 @@ Se selecciona VITS porque es un método TTS paralelo de extremo a extremo que ge
 
 Con este enfoque se debe entrenar la red neuronal de VITS partiendo de cero. Una desventaja es que cae una gran responsabilidad sobre el conjunto de datos de entrenamiento, pues debe tener una gran riqueza y muchos clips de audio.
 	
+	
+\section{Fine-tuning de modelos VITS preentrenados}
+
+\subsection{Italiano}
+
+\subsection{Inglés}
 	
 
 %Are 100 audio samples sufficient?
