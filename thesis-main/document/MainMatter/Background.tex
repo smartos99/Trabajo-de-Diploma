@@ -1,4 +1,4 @@
-\chapter{Métodos actuales para la conversión de texto a voz}\label{chapter:state-of-the-art}
+\chapter{Sistemas para la síntesis texto a voz}\label{chapter:state-of-the-art}
 
 Las redes neuronales han sido las encargadas de los avances actuales en el campo TTS, por tanto esta será la línea seguida en la investigación. \\
 
@@ -13,7 +13,7 @@ El paradigma predominante en la conversión de texto a voz es la síntesis en do
 
 \subsubsection{Tacotron}
 
-Tacotron es un modelo TTS de tipo secuencia a secuencia con un paradigma de atención. Este modelo toma caracteres como entrada y devuelve un espectograma sin procesar usando técnicas para mejorar un modelo \textit{vanilla seq2seq}. Dado un par <texto,audio>, Tacotron puede ser entrenado desde cero con una inicialización aleatoria, y no requiere alineación a nivel de fonema.\\
+Tacotron es un modelo TTS de tipo secuencia a secuencia con un paradigma de atención. Este modelo toma caracteres como entrada y devuelve un espectograma sin procesar usando técnicas para mejorar un modelo seq2seq\footnote{Seq2Seq se basa en el paradigma codificador-decodificador. El codificador codifica la secuencia de entrada, mientras que el decodificador produce la secuencia de destino. codificador} vainilla\footnote{En informática, vainilla es el término utilizado cuando el \textit{software} o los algoritmos, no se emplean a partir de su forma original.}. Dado un par <texto,audio>, Tacotron puede ser entrenado desde cero con una inicialización aleatoria, y no requiere alineación a nivel de fonema.\\
 
 La columna vertebral de Tacotron es un modelo seq2seq con atención, que toma caracteres como entrada, y devuelve el correspondiente espectograma sin procesar, para luego pasarlo al modelo o algoritmo que sinteiza la voz. En el centro de todo esto se encuentra un codificador,un decodificador basado en atención y una red de post procesamiento.\\
 
@@ -72,12 +72,12 @@ La primera arquitectura basada en transformadores se introdujo en 2018 y reempla
 
 \subsubsection{FastSpeech}
 
-FastSpeech, una novedosa red de avance basada en Transformer para generar espectrogramas de mel en paralelo para TTS; toma como entrada una secuencia de texto(fonema) y genera espectrogramas de mel de forma no autorregresiva. Adopta una red feed-forward basada en la autoatención en Transformer y convolución de 1D. 
+FastSpeech, una novedosa red de avance basada en Transformer para generar espectrogramas de mel en paralelo para TTS; toma como entrada una secuencia de texto(fonema) y genera espectrogramas de mel de forma no autorregresiva. Adopta una red feed-forward basada en la autoatención\footnote{La autoatención permite a una red neuronal entender una palabra en el contexto de las palabras que la rodean.} en Transformer y convolución de 1D. 
 
 %Dado que una secuencia de espectrograma mel es mucho más larga que su correspondiente secuencia de fonemas, para resolver el problema de la falta de coincidencia de longitud entre las dos secuencias, FastSpeech adopta un regulador de longitud que aumenta la muestra de la secuencia de fonemas de acuerdo con la duración del fonema (es decir, el número de espectrogramas mel a los que corresponde cada fonema) para que coincida con la longitud de la secuencia del espectrograma mel. El regulador se basa en un predictor de duración de fonemas, que predice la duración de cada fonema. 
 %En lugar de utilizar la arquitectura basada en codificador-atención-decodificador adoptada por la mayoría de las generaciones autorregresivas y no autorregresivas basadas en secuencia a secuencia.
 
-El modelo resuelve problemas existentes en otros modelos TTS de la siguiente forma:
+El modelo resuelve problemas existentes en modelos TTS antiguos de la siguiente forma:
 
 \begin{itemize}
 	\item A través de la generación de espectrogramas de mel paralelos, FastSpeech acelera enormemente el proceso de síntesis.
