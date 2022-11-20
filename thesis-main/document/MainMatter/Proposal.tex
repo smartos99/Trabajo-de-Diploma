@@ -37,15 +37,20 @@ Los modelos \textbf{Tacotron2-DDC, Fast-pitch y Glow-tts} preentrenados en idiom
 
 Por otro lado Coqui solo cuenta con un modelo preentrenado en español, el \textbf{Tacontron-DDC}, que está entrenado sobre la base de datos de M-AILABS[\cite{mailabs}]; este modelo fue probado junto a los VoCoders preentrenados como se muestra en la figura \ref{esmai}. Los mejores resultados fueron arrojados por las combinaciones de \textbf{Tacontron-DDC} con los modelos: Univnet entrenado sobre la base de datos Ljspeech en inglés, y Wavegrad entrenado sobre el conjunto de datos LibriTTS, aunque ambos presentan problemáticas como la mala pronunciación de la letra ñ.\\
 
-De acuerdo con la documentación de Coqui, y con el objetivo de la investigación que consiste en desarrollar un sintetizador de voz en español con voz cubana, se consideraron tres enfoques:
+De acuerdo con la documentación de Coqui, y con el objetivo de la investigación que consiste en desarrollar un sintetizador de voz en español con voz cubana, se proponen tres enfoques:
 
 \begin{enumerate}
-	\item Realizar un \textit{fine-tuning} o reentrenamiento a un modelo preentrenado de [\cite{coqui-doc}], en este caso \textbf{Tacontron-DDC}, que es el único disponible en español. 
+	\item Realizar un \textit{fine-tuning} o reentrenamiento, utilizando una base de datos con voces cubanas, al modelo preentrenado de Coqui[\cite{coqui-doc}], \textbf{Tacontron-DDC}, que es el único disponible en español. 
 	
-	\item Realizar el entrenamiendo desde cero de un modelo; en este caso se podría entrenar cualquier modelo disponible. \textbf{Glow-TTS y VITS} son buenos candidatos pues en general producen resultados bastante satisfactorios.
+	\item Realizar el entrenamiendo desde cero de un modelo, en este caso se podría entrenar cualquier modelo disponible. \textbf{VITS} es un buen candidato pues en general produce resultados bastante satisfactorios.
 	
-	\item La problemática del tamaño de la base de datos puede resolverse entrenando el modelo \textbf{YourTTS}, que según la literatura, es capaz de adaptarse a una nueva voz con muy poco tiempo de audio.
+	\item Realizar un \textit{fine-tuning} a modelos VITS preentrenados en idiomas distintos al español.
+	
+	
+	
 \end{enumerate}
+
+Y a partir de los anteriores evaluar y comparar resultados.
 
 Para el desarrollo de cualquiera de los anteriores es imprescindible la construcción de un conjunto de datos que se adapten al modelo y a las necesidades de la investigación.
 
@@ -65,24 +70,24 @@ Para entrenar un modelo TTS, se necesita un conjunto de datos con grabaciones de
 
 La base de datos conformanda debe tener una buena cobertura del idioma en el que se desea entrenar el modelo. Debe cubrir la variedad fonémica, los sonidos excepcionales y las sílabas. 
 
-
-\section{Reentrenamiendo para el ajuste de Tacontron-DDC}
-
-Se propone desarrollar el primer enfoque: reentrenando(\textit{fine-tuning} en inglés) el modelo \textbf{Tacontron-DDC} en español, pues trae ventajas tales como un aprendizaje más rápido, ya que un modelo preentrenado ya tiene aprendidas funcionalidades que son relevantes para la tarea de producir un discurso. Convergerá más rápido en el nuevo \textit{dataset}, lo que reducirá el costo de entrenamiento y permitirá el proceso de experimentación más rápidamente. Además se pueden obtener buenos resultados con un conjunto de datos más pequeño.\\
-
-Luego de tener entrenado el modelo acústico(TTS) con una base de datos construida con voces cubanas, es posible que alguno de los VoCoders preentrenados disponibles produzca una salida con las características deseadas, en caso contrario se debería entrenar el VoCoder con los datos del \textit{dataset} construido.
-
-\subsection{Fine-Tuning}
+\subsection*{Fine-Tuning}
 Entrenar correctamente un modelo de aprendizaje profundo requiere generalmente de una gran base de datos y de un extenso entrenamiento.
 
 Si se dispone del material necesario y del tiempo para entrenar el algoritmo, estos requisitos no suponen ningún problema, pero, si la base de datos es pequeña o el modelo no se entrena lo suficiente, el aprendizaje podría no ser completo.
 
 El \textit{fine-tuning} es una forma de transferencia de aprendizaje, consiste en aprovechar la información que se ha aprendido de
 la resolución de un problema y utilizarla sobre otro distinto, pero que comparte ciertas características. Se usan los conocimientos adquiridos por una red convolucional para transmitirlos a una nueva red convolucional. Esta nueva red convolucional que se crea no tiene por qué modificar la red original y puede simplemente aprender de ella, sin embargo también es válido el caso donde no solo se modifica la red original, sino que se vuelve a entrenar para aprender más conceptos.
-  
+
 En la presente investigación, se utiliza el reentrenamiento, para a partir modelo previamente entrenado y realizar un nuevo entrenamientor para mejorar su rendimiento en un conjunto de datos diferente.\\
 
-El proceso consiste en modificar la configuración original del modelo preentrenado seleccionado, es decir, establecer la base de datos a utilizar en el reentrenamiento, los detalles acústicos que reflejen las características del nuevo conjunto de datos, el nombre del nuevo modelo ajustado, la dirección donde se guardará el modelo reentrenado, entre otras cuestiones. Para la mayoría de los parámetros se tomaron las características del modelo original \textbf{Tacontron-DDC} en español.
+\section{Fine-Tuning de Tacontron-DDC}
+
+Se selecciona como primera variante el reentrenamiento(\textit{fine-tuning} en inglés) del modelo \textbf{Tacontron-DDC} en español, pues plantea ventajas tales como un aprendizaje más rápido, ya que un modelo preentrenado ya tiene aprendidas funcionalidades que son relevantes para la tarea de producir un discurso. Además convergerá más rápido en el nuevo \textit{dataset}, lo que reducirá el costo de entrenamiento y permitirá el proceso de experimentación más rápidamente. Y de acuerdo a la teoría se pueden obtener buenos resultados con un conjunto de datos más pequeño.\\
+
+Luego de tener entrenado el modelo acústico(TTS) con una base de datos construida con voces cubanas, es posible que alguno de los VoCoders preentrenados disponibles produzca una salida con las características deseadas, en caso contrario se debería entrenar el VoCoder con los datos del \textit{dataset} construido.
+
+
+El proceso consiste en modificar la configuración original del modelo preentrenado seleccionado, es decir, especificar la base de datos a utilizar en el reentrenamiento, los detalles acústicos que reflejen las características del nuevo conjunto de datos, el nombre del nuevo modelo ajustado, la dirección donde se guardará el modelo reentrenado, entre otras cuestiones. Para la mayoría de los parámetros se tomaron las características del modelo original \textbf{Tacontron-DDC} en español.
 
 
 
@@ -97,17 +102,14 @@ Con este enfoque se debe entrenar la red neuronal de VITS partiendo de cero. Una
 	
 \section{Fine-tuning de modelos VITS preentrenados}
 
+
+
 \subsection{Italiano}
 
 \subsection{Inglés}
 	
 
-%Are 100 audio samples sufficient?
-%What should be the appropriate learning rate?
-%What is the recommended length (no of characters) of each audio sample?
-%Should we make any changes to batch size and number of epochs also? (Currently defaults in config file are 64 and 1000 respectively)
-%Any other changes which should be done in the config.json file?
-%Is tts_models--en--ljspeech--tacotron2-DDC_ph a good model to fine tune for custom voice?
+
 
 
 

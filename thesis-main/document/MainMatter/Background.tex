@@ -150,11 +150,11 @@ WaveGrad[\cite{chen2020wavegrad}] es un modelo condicional para la generación d
 
 \subsection{VITS}
 
-\textit{Variational Inference with adversarial learning for end-to-end Text-to-Speech (VITS)} es un método TTS de extremo a extremo en paralelo. Usando un Autocodificador Variacional se conectan los dos módulos de sistemas TTS: modelo acústico y VoCoder, a través de variables latentes para permitir el aprendizaje de extremo a extremo. 
+\textit{Variational Inference with adversarial learning for end-to-end Text-to-Speech (VITS)}[\cite{kim2021conditional}] es un método TTS de extremo a extremo en paralelo. Usando un Autocodificador Variacional se conectan los dos módulos de sistemas TTS: modelo acústico y VoCoder, a través de variables latentes para permitir el aprendizaje de extremo a extremo. 
 
 Para mejorar el poder expresivo del método con el fin de sintetizar formas de onda de voz de alta calidad, se aplican flujos de normalización a la distribución condicional previa y entrenamiento adversarial en el dominio de formas de ondas.
 
-El modelo VITS se describe principalmente en tres etapas: una formulación condicional de Autocodificador variacional; estimación de alineación derivada de la inferencia variacional; y entrenamiento adversarial para mejorar la calidad de la síntesis[\cite{kim2021conditional}].
+El modelo VITS se describe principalmente en tres etapas: una formulación condicional de Autocodificador variacional; estimación de alineación derivada de la inferencia variacional; y entrenamiento adversarial para mejorar la calidad de la síntesis.
 
 La arquitectura general del modelo consiste en un codificador posterior, un codificador anterior, un decodificador, un discriminante, y predictor de duración estocástica. El codificador posterior y discriminante solo se usan para entrenamiento, no para inferencia.
 

@@ -66,14 +66,37 @@ El modelo sobre el que se realiza el ajuste, está preentrenado sobre la base de
 
 \textbf{RNNoise} es una biblioteca basada en una red neuronal para la eliminación de ruido en grabaciones, se utliza en este proyecto para obtener clips de audio libres de ruidos y con la frecuencia de muestreo deseada.
 
+Se realizó un procesamiento para la eliminación de ruido en el audio del \textit{dataset} original, y se estableció una frecuencia de muestreo de acuerdo a las necesidades de cada experimento. 
 
+\section{Herramientas}
+\subsection{Colab}
+\subsection{Google Drive}
+\subsection{Phonemizer espeak}
 
+\section{Modificación en el código fuente de Coqui TTS}
+(lo de formatter.py)
 
+\section{Fine-Tuning de Tacontron-DDC}
+(Estas son ideas sueltas, sin redactar)
 
+-se utilizó la configuración de el modelo preentrenado
+se desacargó el modelo Tacotron, y se puso a entrenar usando cuda(decir q es) en colab, y el script de configuración.
 
+-requiere mucha ram, con 25gb no era suficiente, con 83 sí, no se la cantidad exacta requerida.
 
+-sample rate 16000 pq es sobre el que está entrenado el tacotron en espannol de mailabs.
 
+-Demora mucho el entrenamiento y toma muchos recursos.
 
+-Con 160 epochs se escucha una grabación con mucho ruido, sin embargo en algún momento se puede distinguir alguna sílaba.
 
+-Con 210 epochs algo pasa que las salidad para una oración son audios de 2 minutos donde solo se distingue ruido, y a partir de ahí para 451 y 580 epochs, este comportamiento se mantienen invariante. Se tenía previsto alcanzar las 2000 epochs, pero como el modelo consumía muchos recursos y los resultados no eran los deseados, no se continuó.
 
- 
+-Los resultados no podían estar más lejos de lo esperado, primero se pensaba que iba a ser un reentrenamiento veloz e iba a converger rápidamente en el nuevo dataset 
+
+\section{Entrenamiento de modelo VITS desde cero}
+Como los resultados de Tacotron2 no fueron los mejores, se optó por realizar experimentos con otros modelos, se eligió VITS por ser de los que mejores resultados arroja por encima de Tacotron2 y Glow-TTS[\cite{kim2021conditional}.]
+
+Esta vez se entrena el modelo desde cero utilizando el conjunto de datos con voces cubanas, y la receta que provee la biblioteca[\cite{coqui-doc}] para entrenar VITS[\cite{train-vits}]
+
+\section{Fine-tuning de modelos VITS preentrenados}
