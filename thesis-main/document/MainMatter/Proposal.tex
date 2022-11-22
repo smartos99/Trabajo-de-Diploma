@@ -100,19 +100,27 @@ Se selecciona VITS porque es un método TTS paralelo de extremo a extremo que ge
 Con este enfoque se debe entrenar la red neuronal de VITS partiendo de cero. Una desventaja es que cae una gran responsabilidad sobre el conjunto de datos de entrenamiento, pues debe tener una gran riqueza y muchos clips de audio.
 	
 	
-\section{Fine-tuning de modelos VITS preentrenados}
-
-
+\section{Fine-tuning de modelos VITS preentrenados en otros idiomas}
 
 \subsection{Italiano}
+Las culturas hispánicas tienen mucho en común con la cultura italiana, sobre todo en lo que concierne al lenguaje y la comunicación. Tanto el español como el italiano son lenguas romances, derivadas del latín, siendo justamente de las más similares, incluso más que el francés o el rumano.
 
+Es por este hecho que el italiano y el español comparten palabras muy parecidas y siguen la misma estructura gramatical. Entre ellos existe un grado de similitud léxica del 82$\%$, lo que además indica que son idiomas fáciles de aprender para sus respectivos hablantes. Sin embargo, las características que tienen en común van más allá de su origen y de la gramática.
+
+Una similitud entre ambas lenguas es la cantidad de vocales en el alfabeto, aunque en italiano las vocales tienden a matizarse con sonidos más abiertos y con un acento grave. Es muy común que el parecido existente entre las palabras en italiano y español se vea afectada sólo por una o más vocales, como por ejemplo: vecino y vicino, cámara y camera, igual y uguale. Por supuesto existen un gran número de diferencias, aunque son más notables en vocabulario que en lo que sería la pronunciación. 
+
+Debido a todo esto un modelo entrenado en italiano sería el candidato ideal para realizar un ajuste sobre una base de datos en español. 
 \subsection{Inglés}
-	
+
+A pesar de las diferencias evidentes, en realidad el español y el inglés se parecen más de lo se cree. La primera de las semejanzas entre el inglés y el español es que usan el alfabeto romano, lo cual provoca que los sonidos de ambos idiomas sean similares, aunque no plenamente iguales. El mejor ejemplo lo constituyen las vocales: mientras en el español sólo se reconocen 5 sonidos, uno para cada vocal, en el inglés encontramos más de 14 sonidos, pues hay vocales cortas y largas, las cuales se catalogan así por la duración de su pronunciación. Estos dos idiomas son alfabéticos, de modo que a través de letras se pueden representar sus sonidos; el español comparte 2/3 de sus fonemas con el inglés.
+
+La estructura gramatical del inglés es similar a la del español en más de un 90$\%$, pero la del inglés es muchísimo más simple. Además, el vocabulario se forma con prefijos y sufijos tanto en inglés como en español (que son en su mayoría de raíz latina en ambos idiomas).
+
+%Tea (i)         Esta vocal es más aguda que la “i”.
+%Fork (o)       Parecido a la “o” pero más redondeada y profunda puede sonar un poco similar a la “u”.
+%Cook (u)       Similar a la “u” pero sin redondear los labios
 
 
+Las consonantesv, ll, h, j, r, rr, z, y  la x son pronunciadas muy diferentes en español y en inglés. La consonante ñ no existe en inglés; el sonido que se conoce de esta consonante en español se escribe en ingles ny. Las combinaciones de algunas consonantes con vocales cambia totalmente el sentido de la pronunciación. Por ejemplo: la combinación de la “q” y la “u” en las palabras como queen, quiet o quick la pronunciación de  la “u” en inglés se percibe.
 
-
-
-
-
-
+Teniendo en cuenta la similitud, y al mismo tiempo las marcadas diferencias entre ambos idiomas, se escoge un modelo VITS preentrenado en inglés para realizar un \textit{fine-tuning} con la base de datos cubana.

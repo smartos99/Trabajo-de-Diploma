@@ -47,8 +47,8 @@ Las transcripciones se recogen dentro del archivo metadata.csv. Donde audio1, au
 	audio4|Esta es mi transcripción 4.
 \end{center}
 
-El modelo sobre el que se realiza el ajuste, está preentrenado sobre la base de datos en Español de \textit{The M-AiLabs Speech Dataset}, por tanto utilizaremos la misma estructura de este en la conformación de la base de datos con voces cubanas. Finalmente quedando la siguiente estructura:
-
+ Se adoptará en la conformación de la base de datos con voces cubanas, la misma estructura de la base de datos en Español de \textit{The M-AiLabs Speech Dataset}, pues algunos de los modelos que se utilizaron fueron preentrenados sobre estos conjuntos de datos. Finalmente queda la siguiente organización:
+ 
 \begin{flushleft}
 	MyDataset/by$\_$book/female/[creador del dataset]/[nombre del hablante]
 	
@@ -74,19 +74,85 @@ Se realizó un procesamiento para la eliminación de ruido en el audio del \text
 \subsection{Phonemizer espeak}
 
 \section{Modificación en el código fuente de Coqui TTS}
-(lo de formatter.py)
+El código fuente del repositorio ocasionaba problemas al conformar ruta del archivo metadata.csv, por lo que se realizó un pequeño cambio en el método \texttt{mailabs} del archivo \texttt{formatter.py}
+
+
+\lstset{language=Python}
+\lstset{frame=lines}
+\lstset{caption={C\'odigos QR}}
+\lstset{label={lst:code_direct}}
+\lstset{basicstyle=\footnotesize}
+\begin{lstlisting}
+def mailabs(root_path, meta_files=None, ignored_speakers=None):
+"""Normalizes M-AI-Labs meta data files to TTS format
+
+Args:
+root_path (str): root folder of the MAILAB language folder.
+meta_files (str):  list of meta files to be used in the training. If None, finds all the csv files
+recursively. Defaults to None
+"""
+speaker_regex = re.compile("by_book/(male|female)/(?P<speaker_name>[^/]+)/")
+if not meta_files:
+csv_files = glob(root_path + "/**/metadata.csv", recursive=True)
+else:
+csv_files = meta_files
+
+items = []
+print(f"{csv_files}")
+for csv_file in [csv_files]:
+if os.path.isfile(csv_file):
+txt_file = csv_file
+else:
+txt_file = os.path.join(root_path, csv_file)
+
+
+folder = os.path.dirname(txt_file)
+# determine speaker based on folder structure...
+speaker_name_match = speaker_regex.search(txt_file)
+if speaker_name_match is None:
+continue
+speaker_name = speaker_name_match.group("speaker_name")
+# ignore speakers
+if isinstance(ignored_speakers, list):
+if speaker_name in ignored_speakers:
+continue
+print(" | > {}".format(csv_file))
+with open(txt_file, "r", encoding="utf-8") as ttf:
+for line in ttf:
+cols = line.split("|")
+if not meta_files:
+wav_file = os.path.join(folder, "wavs", cols[0] + ".wav")
+else:
+wav_file = os.path.join(root_path, folder.replace("metadata.csv", ""), "wavs", cols[0] + ".wav")
+
+if os.path.isfile(wav_file):
+text = cols[1].strip()
+items.append(
+{"text": text, "audio_file": wav_file, "speaker_name": speaker_name, "root_path": root_path}
+)
+else:
+# M-AI-Labs have some missing samples, so just print the warning
+print("> File %s does not exist!" % (wav_file))
+return items
+\end{lstlisting}
 
 \section{Fine-Tuning de Tacontron-DDC}
-(Estas son ideas sueltas, sin redactar)
+Como ya se expuso en otros capítulos, el \textit{fine-tuning} resulta una idea prometedora, pues en teoría salva tiempo y recursos.
 
--se utilizó la configuración de el modelo preentrenado
-se desacargó el modelo Tacotron, y se puso a entrenar usando cuda(decir q es) en colab, y el script de configuración.
+Para el proceso de ajuste de Tacotron2 a la base de datos personalizada, se utilizó la configuración del modelo preentrenado en español sobre el \textit{dataset} de M-AILABS. 
 
--requiere mucha ram, con 25gb no era suficiente, con 83 sí, no se la cantidad exacta requerida.
+La frecuencia de muestreo(\textit{sample rate}) que se establece en la configuración es 16000Hz, pues el conjunto de datos de M-AILABS sobre el que se preentrenó el modelo seleccionado, se encuentra en esta misma frecuencia. Finalmente se debe utilizar un cargador de datos(\textit{formatter}) compatible con la base de datos usada, en este caso se selecciona la variante \texttt{mailabs}, que se puede apreciar en la sección anterior.
 
--sample rate 16000 pq es sobre el que está entrenado el tacotron en espannol de mailabs.
+El próximo paso es desacargar el modelo Tacotron2, para luego comenzar el reentrenamiento.
 
--Demora mucho el entrenamiento y toma muchos recursos.
+\texttt{tts - -model$\_$name tts$\_$models$/$es$/$mai$/$tacotron2-DDC - -text "Hola."}
+
+\texttt{> Downloading model to $/$home$/$ubuntu$/$.local$/$share$/$tts$/$tts$\_$models--en--ljspeech
+	--glow-tts}\\
+
+El reentrenamiento se llevó a cabo utilizando el GPU Premium de Google Colab, y CUDA. Requirió una gran cantidad de memoria RAM, siendo 25GB una cantidad insuficiente, se comprobó que con un procesador de 83GB de RAM, sí podía realizarse. El reentrenamiento fue extremandamente costoso, en tiempo y en \textit{computer units}\footnote{Una unidad de cómputo (CU) es la unidad de medida de los recursos consumidos por ejecuciones y compilaciones de actores.}, consumiendo más de 1000CU
+
+(Resultados)
 
 -Con 160 epochs se escucha una grabación con mucho ruido, sin embargo en algún momento se puede distinguir alguna sílaba.
 
@@ -95,8 +161,32 @@ se desacargó el modelo Tacotron, y se puso a entrenar usando cuda(decir q es) e
 -Los resultados no podían estar más lejos de lo esperado, primero se pensaba que iba a ser un reentrenamiento veloz e iba a converger rápidamente en el nuevo dataset 
 
 \section{Entrenamiento de modelo VITS desde cero}
-Como los resultados de Tacotron2 no fueron los mejores, se optó por realizar experimentos con otros modelos, se eligió VITS por ser de los que mejores resultados arroja por encima de Tacotron2 y Glow-TTS[\cite{kim2021conditional}.]
+Como los resultados de Tacotron2 no fueron los mejores, se optó por realizar experimentos con otros modelos, se eligió VITS por ser de los que mejores resultados arroja por encima de Tacotron2 y Glow-TTS[\cite{kim2021conditional}].
 
-Esta vez se entrena el modelo desde cero utilizando el conjunto de datos con voces cubanas, y la receta que provee la biblioteca[\cite{coqui-doc}] para entrenar VITS[\cite{train-vits}]
+Esta vez se entrena el modelo desde cero utilizando el conjunto de datos con voces cubanas, y la receta[\cite{train-vits}] que provee Coqui[\cite{coqui-doc}] para entrenar VITS. Para este entrenamiento, siguiendo ejemplos de entrenamientos anteriores, se cambia la frecuencia de muestreo del \textit{dataset} a 22050. Por otro lado el \textit{formatter} utilizado es la variante \texttt{mailabs}, que se encuentra en \texttt{formatters.py}
+
+El entrenamiento se produjo utilizando el GPU Premium de Google Colab, y CUDA. Requirió una gran cantidad de memoria RAM, siendo 25GB una cantidad insuficiente, se comprobó que con un procesador de 83GB de RAM, sí podía realizarse. Se produjo completa e ininterrumpidamente por 2000 \textit{epochs}, resultando en que el último mejor modelo se genera en la \textit{epoch} número 967. El entrenamiento no representó un gran costo, en tiempo y en \textit{computer units}, demorando alrededor de 7 horas y consumiendo alrededor de 200CU.
+
+Finalmente se obtiene un modelo que permite la emición de sonidos comprensibles, aunque no completamente inteligibles, pues produce un discurso robótico y tiene dificultad en la combinación de difonos, por lo que hay frases y palabras indescifrables para el oyente.
+
+
 
 \section{Fine-tuning de modelos VITS preentrenados}
+
+\subsection{Modelo preentrenado en italiano}
+El modelo disponible en Coqui en idioma italiano fue preentrenado sobre la base de datos en italiano de M-AILABS, cuyas grabaciones poseen una frecuencia de muestreo de 16000Hz, por tanto el \textit{dataset} de voces cubanas que se utiliza para el \textit{fine-tuning} fue llevado a la misma frecuencia.
+El \textit{formatter} utilizado es igualmente la variante \texttt{mailabs}.
+
+El proceso de \textit{fine-tuning} se llevó a cabo utilizando el GPU Premium de Google Colab, y CUDA. Requirió una gran cantidad de memoria RAM, siendo 25GB una cantidad insuficiente, no se precisa exactamente la cantidad de RAM necesaria, sin embargo, se comprobó que con un procesador de 83GB de RAM, sí podía realizarse sin problemas. Además de esto, no representó un gran costo, en tiempo y en \textit{computer units}, demorando alrededor de 3 horas y consumiendo alrededor de \textcolor{red}{CU}.
+
+El modelo que se genera luego de un reentrenamiento inninterrumpido durante 1000 \textit{epochs}, arroja como resultado que, para una frase escrita dada, produce un discurso bastante comprensible, aunque un poco robótico, y entrecortado en alguna partes. Además con palabras que el oyente no puede descifrar. Es importante destacar que el modelo original de Coqui en italiano produce también una voz ruidosa, así que la cuestión del ruido es probable que venga desde el modelo inicial, agravada con el \textit{fine-tuning} a partir del \textit{Cuban Voice Dataset}.
+
+
+\subsection{Modelo preentrenado en Inglés}
+La variante del modelo VITS entrenada sobre el conjunto LJ-Speech Dataset en inglés, se seleccionó por ser el inglés un idioma, más distante del español que el italiano. Se lleva a cabo el mismo proceso que en los caso anterior, con la diferencia de que la base de datos \textit{Cuban Voice Dataset} cambia su frecuencia de muestreo a 22050Hz. 
+El reentrenamiento se realizó siguiendo las mismas características que en el modelo en italiano, y consumió alrededor del mismo tiempo y recursos.
+
+Para terminar el modelo del inglés ajustado a la base de datos cubana arroja diferentes resultados que el modelo que se obtiene a partir del modelo italiano. Una ventaja es que el ruido, y la pronunciación robótica no están presentes en el nuevo discurso, y la voz sintética suena bastante parecida a la del hablante del conjunto de datos, está es un objetivo que hasta este punto no había sido alcanzado. Sin embargo, y como era de esperar gramaticalmente y fonéticamente presenta más problemas, entre ellos la pronunciación de la ñ y las r unidas a vocales, entre otros bastante evidentes al escuchar la salida.
+
+
+\section{Entrenamiento con M-AILABS DATASET}
