@@ -1,43 +1,43 @@
 \chapter{Propuesta}\label{chapter:proposal}
 
 Con el objetivo de lograr una síntesis de voz satisfactoria y después de realizar un estudio de las tecnologías que se utilizan para este fin, se elige Coqui TTS como herramienta base. Coqui cuenta con una gran variedad de modelos preentrenados en más de 20 idiomas.  
-El primer paso en el desarrollo del sintetizador fue instalar la biblioteca Coqui TTS, de acuerdo a las indicaciones del repositorio oficial[\cite{coqui-doc}]. Se realizó un estudio del comportamiento de combinaciones de parejas modelo TTS y VoCoder, para evaluar cuáles ofrecían mejores resultados:
+El primer paso en el desarrollo del sintetizador ess instalar la biblioteca Coqui TTS, de acuerdo a las indicaciones del repositorio oficial[\cite{coqui-doc}]. Se realizó un estudio del comportamiento de combinaciones de parejas modelo TTS y VoCoder, para evaluar cuáles ofrecían mejores resultados, y se pueden observar en la figuras \ref{en_tacotron2}, \ref{en_fastpitch}, \ref{en_glowtts}.
 
-
+Se experimenta la combinación del modelo TTS Tacotron2-DDC preentrenado en Inglés con los VoCoders WaveGrad y HiFiGan-V2 como se evidencia en la figura \ref{en_tacotron2}. Igualmente con el modelo Fast-Pitch preentrenado en inglés con el VoCoder UnivNet igualmente en  en inglés(figura \ref{en_fastpitch}), para terminar con los modelos en inglés se combina Glow-TTS y el VoCoder Multiband-MelGan(figura \ref{en_glowtts})
+Los modelos preentrenados en idioma inglés al combinarse con estos VoCoders, para un texto en español arroja distintos resultados, en algunos casos solo producen señales ruidosas mientras que los más satisfactorios, producen un discurso con una pronunciación propia de una persona de habla inglesa hablando español.
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.3\linewidth]{Graphics/en_ljspeech}
+	\includegraphics[width=0.6\linewidth]{Graphics/en_tacotron2}
 	\caption{Modelo TTS Tacotron2-DDC entrenado en Inglés}
-	\label{enljspeech}
+	\label{en_tacotron2}
 \end{figure}
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.3\linewidth]{Graphics/fastpitch}
+	\includegraphics[width=0.3\linewidth]{Graphics/en_fastpitch}
 	\caption{Modelo TTS Fast-Pitch entrenado en Inglés}
-	\label{fastpitch}
+	\label{en_fastpitch}
 \end{figure}
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.4\linewidth]{Graphics/glow_tts}
+	\includegraphics[width=0.3\linewidth]{Graphics/en_glowtts}
 	\caption{Modelo TTS Glow-TTS entrenado en Inglés}
-	\label{glowtts}
+	\label{en_glowtts}
 \end{figure}
+
+
+Por otro lado Coqui solo cuenta con un modelo preentrenado en español, el \textbf{Tacontron-DDC}, que está entrenado sobre la base de datos de M-AILABS[\cite{mailabs}]; este modelo fue probado junto a los VoCoders preentrenados como se muestra en la figura \ref{es_tacotron}. Los mejores resultados fueron arrojados por las combinaciones de \textbf{Tacontron-DDC} con los modelos: Univnet entrenado sobre la base de datos Ljspeech en inglés, y Wavegrad entrenado sobre el conjunto de datos LibriTTS, aunque ambos presentan problemáticas como la mala pronunciación de la letra ñ.
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.7\linewidth]{Graphics/es_mai}
+	\includegraphics[width=0.8\linewidth]{Graphics/es_tacotron}
 	\caption{Modelo TTS Tacotron2-DDC entrenado en Español}
-	\label{esmai}
+	\label{es_tacotron}
 \end{figure}
 
 
-Los modelos \textbf{Tacotron2-DDC, Fast-pitch y Glow-tts} preentrenados en idioma inglés al combinarse con VoCoders, como se observa en las figuras \ref{enljspeech}, \ref{fastpitch}, \ref{glowtts} para un texto en español arroja distintos resultados, en algunos casos solo producen ruido mientras que los más satisfactorios, producen un discurso con una pronunciación propia de una persona de habla inglesa hablando español.
-
-Por otro lado Coqui solo cuenta con un modelo preentrenado en español, el \textbf{Tacontron-DDC}, que está entrenado sobre la base de datos de M-AILABS[\cite{mailabs}]; este modelo fue probado junto a los VoCoders preentrenados como se muestra en la figura \ref{esmai}. Los mejores resultados fueron arrojados por las combinaciones de \textbf{Tacontron-DDC} con los modelos: Univnet entrenado sobre la base de datos Ljspeech en inglés, y Wavegrad entrenado sobre el conjunto de datos LibriTTS, aunque ambos presentan problemáticas como la mala pronunciación de la letra ñ.\\
-
-De acuerdo con la documentación de Coqui, y con el objetivo de la investigación que consiste en desarrollar un sintetizador de voz en español con voz cubana, se proponen tres enfoques:
+De acuerdo con la documentación de Coqui, el objetivo de la investigación que consiste en desarrollar un sintetizador de voz en español con voz cubana, y experimentos iniciales realizados se proponen tres enfoques:
 
 \begin{enumerate}
 	\item Realizar un \textit{fine-tuning} o reentrenamiento, utilizando una base de datos con voces cubanas, al modelo preentrenado de Coqui[\cite{coqui-doc}], \textbf{Tacontron-DDC}, que es el único disponible en español. 
@@ -46,68 +46,76 @@ De acuerdo con la documentación de Coqui, y con el objetivo de la investigació
 	
 	\item Realizar un \textit{fine-tuning} a modelos VITS preentrenados en idiomas distintos al español.
 	
+	\item Realizar un preentrenamiento desde cero al modelo VITS utilizando una base de datos fuente, para luego realizar un proceso de \textit{fine-tuning} sobre este, pero utilizando la base de datos de voces cubanas contruida.
+	
 	
 	
 \end{enumerate}
 
-Y a partir de los anteriores evaluar y comparar resultados.
+Y a partir de estos evaluar y comparar resultados.
 
 Para el desarrollo de cualquiera de los anteriores es imprescindible la construcción de un conjunto de datos que se adapten al modelo y a las necesidades de la investigación.
 
 
 \section{Creación de la base de datos}
 
-Para entrenar un modelo TTS, se necesita un conjunto de datos con grabaciones de voz y transcripciones, en este caso fue una base de datos en español con voces cubanas. El discurso debe dividirse en clips de audio y cada clip necesita su transcripción correspondiente. La base de datos debe poseer una organización específica, que se eligirá luego, de forma tal que el cargador de datos de Coqui TTS sea capaz de cargarlos para utilizar en el entrenamiento[\cite{formatting-dataset}].    
+Para entrenar un modelo TTS, se necesita un conjunto de datos con grabaciones de voz y transcripciones, en este caso fue una base de datos en español con voces cubanas. El discurso debe dividirse en clips de audio y cada clip necesita su transcripción correspondiente. La base de datos debe poseer una organización específica, de forma tal que el cargador de datos de Coqui TTS sea capaz de cargarlos para utilizar en el entrenamiento[\cite{formatting-dataset}].    
 
 \subsubsection{Formato wav}
-(***)
+Los clips de audio del conjunto de datos deben poseer formato WAV. El formato WAV[\cite{wav}], es un formato estándar de archivo de audio, desarrollado por IBM[\cite{ibm}] y Microsoft[\cite{microsoft}], para almacenar un flujo de bits de audio en PC. Los archivos WAV no se comprimen cuando se codifican. Eso significa que todos los elementos del audio originales permanecen en el archivo. Los editores de audio describen los archivos WAV como ``sin pérdidas'' porque no se pierde ninguna parte de su sonido. Como resultado, los archivos WAV tienen objetivamente una mejor calidad y proporcionan clips de audio más reales y precisos. .
 
 
+\subsubsection{Idioma Español}
+La base de datos conformanda debe tener una buena cobertura del idioma en el que se desea entrenar el modelo. Debe cubrir la variedad fonémica, los sonidos excepcionales y los signos especiales.
 
-\subsubsection{Hablar del idioman español}
-(***)\\
+El idioma español[\cite{ecured}] o castellano. Es una lengua romance del grupo ibérico, y tras el chino mandarín, es la lengua más hablada del mundo por el número de personas que la tienen como lengua materna. El idioma es un rasgo esencial de la nacionalidad. Por eso unos de los rasgos que define a los cubanos, es precisamente este: la comunicación mediante el idioma español. 
 
+Las variedades geográficas del español, llamadas dialectos o geolectos, difieren entre sí por multitud de razones. Entre las de tipo fonético destacan la distinción o no de los fonemas correspondientes a las grafías c/z y s (ausencia o presencia de ceceo/seseo), la distinción o no de los fonemas correspondientes a las grafías ll e y (ausencia o presencia de yeísmo) y la aspiración o no de la s ó z ante una consonante, aunque estas diferencias no suelen ocasionar problemas de inteligibilidad entre sus hablantes.
 
-La base de datos conformanda debe tener una buena cobertura del idioma en el que se desea entrenar el modelo. Debe cubrir la variedad fonémica, los sonidos excepcionales y las sílabas. 
+La estructura silábica más frecuente del español es consonante más vocal, de forma que tiende hacia la sílaba abierta. Caracteriza al español una tensión articulatoria alta, no tan relajada como en italiano, y estadísticamente una gran presencia de la vocal a. La acentuación es de intensidad y estadísticamente dominan las palabras llanas, o acentuadas en la penúltima sílaba, después las agudas y por último las esdrújulas. 
+
+En español hay cinco vocales fonológicas: /a/, /e/, /i/, /o/ y /u/. La /e/ y /o/ son vocales medias, ni cerradas ni abiertas, pero pueden tender a cerrarse y abrirse. Sin embargo, estos sonidos no suponen un rasgo distintivo en español general. Según la mayoría de los autores, se distinguen por lo general 24 fonemas en el español, cinco de los cuales corresponden a vocales y 19 a consonantes, además de otros fonemas dialectales y/o alofónicos\footnote{alófono: Sonido propio de la pronunciación de un fonema, que puede variar según su posición en la palabra o en la sílaba y en relación con los sonidos vecinos, aunque sigue considerándose el mismo fonema.}, aunque la mayoría de los dialectos sólo cuentan con 17 consonantes, y algunos otros con 18.
+
+El español se escribe mediante una variante del alfabeto latino con la letra adicional ``ñ'' y los dígrafos\footnote{dígrafo: Signo ortográfico compuesto de dos letras y que representa un solo sonido.} ``ch'' y ``ll'', consideradas letras del abecedario desde 1803, debido a que representan un solo sonido, distinto de las letras que lo componen. Así, el alfabeto español queda formado por 27 letras y 2 dígrafos: a, b, c, ch, d, e, f, g, h, i, j, k, l, ll , m, n, ñ, o, p, q, r, s, t, u, v, w, x, y, z. Además el español emplea signos gráficos de interrogación y exclamación como ``¿'' y ``¡'', que no poseen otras lenguas. Estos signos especiales facilitan la lectura de interrogaciones y exclamaciones largas que oralmente solo se expresan por variaciones de entonación. 
 
 \subsection*{Fine-Tuning}
 Entrenar correctamente un modelo de aprendizaje profundo requiere generalmente de una gran base de datos y de un extenso entrenamiento.
 
 Si se dispone del material necesario y del tiempo para entrenar el algoritmo, estos requisitos no suponen ningún problema, pero, si la base de datos es pequeña o el modelo no se entrena lo suficiente, el aprendizaje podría no ser completo.
 
-El \textit{fine-tuning} es una forma de transferencia de aprendizaje, consiste en aprovechar la información que se ha aprendido de
-la resolución de un problema y utilizarla sobre otro distinto, pero que comparte ciertas características. Se usan los conocimientos adquiridos por una red convolucional para transmitirlos a una nueva red convolucional. Esta nueva red convolucional que se crea no tiene por qué modificar la red original y puede simplemente aprender de ella, sin embargo también es válido el caso donde no solo se modifica la red original, sino que se vuelve a entrenar para aprender más conceptos.
+El \textit{fine-tuning} consiste en aprovechar la información que se ha aprendido de la resolución de un problema y utilizarla sobre otro distinto, pero que comparte ciertas características. Se usan los conocimientos adquiridos por una red convolucional para transmitirlos a una nueva red convolucional. Esta nueva red convolucional que se crea no tiene por qué modificar la red original y puede simplemente aprender de ella, sin embargo también es válido el caso donde no solo se modifica la red original, sino que se vuelve a entrenar para aprender más conceptos.
 
-En la presente investigación, se utiliza el reentrenamiento, para a partir modelo previamente entrenado y realizar un nuevo entrenamientor para mejorar su rendimiento en un conjunto de datos diferente.\\
+En la presente investigación, se utiliza el reentrenamiento, para a partir modelo previamente entrenado y realizar un nuevo entrenamiento para mejorar su rendimiento en un conjunto de datos diferente.\\
 
 \section{Fine-Tuning de Tacontron-DDC}
 
-Se selecciona como primera variante el reentrenamiento(\textit{fine-tuning} en inglés) del modelo \textbf{Tacontron-DDC} en español, pues plantea ventajas tales como un aprendizaje más rápido, ya que un modelo preentrenado ya tiene aprendidas funcionalidades que son relevantes para la tarea de producir un discurso. Además convergerá más rápido en el nuevo \textit{dataset}, lo que reducirá el costo de entrenamiento y permitirá el proceso de experimentación más rápidamente. Y de acuerdo a la teoría se pueden obtener buenos resultados con un conjunto de datos más pequeño.\\
+Se implementa como primera variante el reentrenamiento(\textit{fine-tuning} en inglés) del modelo \textbf{Tacontron-DDC} en español, pues brinda ventajas tales como un aprendizaje más rápido, ya que un modelo preentrenado ya tiene aprendidas funcionalidades que son relevantes para la tarea de producir un discurso. Además convergerá más rápido en el nuevo \textit{dataset}, lo que reducirá el costo de entrenamiento y permitirá el proceso de experimentación más rápidamente. Y de acuerdo a la teoría se pueden obtener buenos resultados con un conjunto de datos más pequeño.\\
 
 Luego de tener entrenado el modelo acústico(TTS) con una base de datos construida con voces cubanas, es posible que alguno de los VoCoders preentrenados disponibles produzca una salida con las características deseadas, en caso contrario se debería entrenar el VoCoder con los datos del \textit{dataset} construido.
 
 
-El proceso consiste en modificar la configuración original del modelo preentrenado seleccionado, es decir, especificar la base de datos a utilizar en el reentrenamiento, los detalles acústicos que reflejen las características del nuevo conjunto de datos, el nombre del nuevo modelo ajustado, la dirección donde se guardará el modelo reentrenado, entre otras cuestiones. Para la mayoría de los parámetros se tomaron las características del modelo original \textbf{Tacontron-DDC} en español.
-
+El proceso de \textit{fine-tuning} consiste en modificar la configuración original del modelo preentrenado seleccionado, es decir, especificar la base de datos a utilizar en el reentrenamiento, los detalles acústicos que reflejen las características del nuevo conjunto de datos, el nombre del nuevo modelo ajustado, la dirección donde se guardará el modelo reentrenado, entre otros aspectos. Para la mayoría de los parámetros se tomaron las características del modelo original \textbf{Tacontron-DDC} en español.
 
 
 \section{Entrenamiento de modelo VITS desde cero}
 
 Existen varios modelos de texto a voz de extremo a extremo que permiten el entrenamiento en una sola etapa y el muestreo en paralelo, sin embargo, generalmente la calidad de la muestra no coincide con la de los sistemas TTS de dos etapas. 
 
-Se selecciona VITS porque es un método TTS paralelo de extremo a extremo que genera un sonido de audio más natural que los modelos actuales de dos etapas. Y de acuerdo a una evaluación humana subjetiva (puntuación de opinión media, o MOS), muestra que el modelo supera a los mejores sistemas TTS disponibles públicamente y logra un MOS comparable a la realidad del terreno.
+Se selecciona VITS porque es un método TTS paralelo de extremo a extremo que genera un sonido de audio más natural que los modelos actuales de dos etapas. Y de acuerdo a una evaluación humana subjetiva[\cite{mos}] (puntuación de opinión media, o MOS), muestra que el modelo supera a los mejores sistemas TTS disponibles públicamente y logra un MOS comparable a la realidad.
 
-Con este enfoque se debe entrenar la red neuronal de VITS partiendo de cero. Una desventaja es que cae una gran responsabilidad sobre el conjunto de datos de entrenamiento, pues debe tener una gran riqueza y muchos clips de audio.
+Con este enfoque se debe entrenar la red neuronal de VITS partiendo de cero. Una desventaja es que cae una gran responsabilidad sobre el conjunto de datos de entrenamiento, pues debe tener una gran riqueza del idioma y muchos clips de audio.
 	
 	
 \section{Fine-tuning de modelos VITS preentrenados en otros idiomas}
+
+Se persigue experimentar el proceso de \textit{fine-tuning} en este modelo de extremo a extremo, sin embargo no existen modelos VITS preentrenados en español disponibles. Por esto se escogen los idiomas italiano e inglés como candidatos en esta tarea.
 
 \subsection{Italiano}
 Las culturas hispánicas tienen mucho en común con la cultura italiana, sobre todo en lo que concierne al lenguaje y la comunicación. Tanto el español como el italiano son lenguas romances, derivadas del latín, siendo justamente de las más similares, incluso más que el francés o el rumano.
 
 Es por este hecho que el italiano y el español comparten palabras muy parecidas y siguen la misma estructura gramatical. Entre ellos existe un grado de similitud léxica del 82$\%$, lo que además indica que son idiomas fáciles de aprender para sus respectivos hablantes. Sin embargo, las características que tienen en común van más allá de su origen y de la gramática.
 
-Una similitud entre ambas lenguas es la cantidad de vocales en el alfabeto, aunque en italiano las vocales tienden a matizarse con sonidos más abiertos y con un acento grave. Es muy común que el parecido existente entre las palabras en italiano y español se vea afectada sólo por una o más vocales, como por ejemplo: vecino y vicino, cámara y camera, igual y uguale. Por supuesto existen un gran número de diferencias, aunque son más notables en vocabulario que en lo que sería la pronunciación. 
+Una similitud entre ambas lenguas es la cantidad de vocales en el alfabeto, aunque en italiano las vocales tienden a matizarse con sonidos más abiertos y con un acento grave. Es muy común que el parecido existente entre las palabras en italiano y español se vea afectada sólo por una o más vocales, como por ejemplo: vecino y vicino, cámara y camera, igual y uguale. Por supuesto existen un gran número de diferencias, aunque son más notables en vocabulario que en lo que respecta a la pronunciación. 
 
 Debido a todo esto un modelo entrenado en italiano sería el candidato ideal para realizar un ajuste sobre una base de datos en español. 
 \subsection{Inglés}
@@ -116,11 +124,6 @@ A pesar de las diferencias evidentes, en realidad el español y el inglés se pa
 
 La estructura gramatical del inglés es similar a la del español en más de un 90$\%$, pero la del inglés es muchísimo más simple. Además, el vocabulario se forma con prefijos y sufijos tanto en inglés como en español (que son en su mayoría de raíz latina en ambos idiomas).
 
-%Tea (i)         Esta vocal es más aguda que la “i”.
-%Fork (o)       Parecido a la “o” pero más redondeada y profunda puede sonar un poco similar a la “u”.
-%Cook (u)       Similar a la “u” pero sin redondear los labios
-
-
-Las consonantesv, ll, h, j, r, rr, z, y  la x son pronunciadas muy diferentes en español y en inglés. La consonante ñ no existe en inglés; el sonido que se conoce de esta consonante en español se escribe en ingles ny. Las combinaciones de algunas consonantes con vocales cambia totalmente el sentido de la pronunciación. Por ejemplo: la combinación de la “q” y la “u” en las palabras como queen, quiet o quick la pronunciación de  la “u” en inglés se percibe.
+Las consonantes v, ll, h, j, r, rr, z, y  la x son pronunciadas muy diferentes en español y en inglés. La consonante ñ no existe en inglés; el sonido que se conoce de esta consonante en español se escribe en ingles ny. Las combinaciones de algunas consonantes con vocales cambia totalmente el sentido de la pronunciación. Por ejemplo: la combinación de la “q” y la “u” en las palabras como queen, quiet o quick la pronunciación de  la “u” en inglés se percibe.
 
 Teniendo en cuenta la similitud, y al mismo tiempo las marcadas diferencias entre ambos idiomas, se escoge un modelo VITS preentrenado en inglés para realizar un \textit{fine-tuning} con la base de datos cubana.

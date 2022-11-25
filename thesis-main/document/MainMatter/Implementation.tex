@@ -1,10 +1,44 @@
-\chapter{Detalles de Implementación y Experimentos}\label{chapter:implementation}
+\chapter{Experimentación y Resultados}\label{chapter:implementation}
 
 \section{Instalación de la biblioteca Coqui}
 Coqui [\cite{coqui-doc}] es un repositorio de código abierto que implementa las últimas investigaciones en materia de síntesis de voz, como Tacotron 2 y VITS que son los modelos base utilizados en el presente proyecto. Este repositorio ha sido usado para generar modelos en más de 20 idiomas  y cuenta además con múltiples ``recetas'' para el entrenamiento de modelos. 
 
 La biblioteca se instala de acuerdo a las instrucciones orientadas a desarrolladores en [\cite{coqui-doc}].
 Con esto ya es suficiente para probar los modelos preentrenados disponibles de Coqui.
+
+\section{Configuración de la evaluación de los modelos}
+Se utiliza la medida MOS para la evaluación de los modelos obtenidos en este trabajo. Un puntaje de opinión promedio[\cite{mos}][\cite{mos1}] (MOS, del inglés \textit{Mean Opinion Score}) es una medida numérica de la calidad general de un evento o experiencia juzgada por humanos. En telecomunicaciones, MOS es terminología para clasificación de calidad de audio y video, se refiere a la calidad de escuchar, hablar o conversar, ya sea que se originen en modelos subjetivos u objetivos. Y se evalua de la siguiente forma:
+ 
+  \begin{longtable} [c] { | c | c | }
+	\hline
+	\endfirsthead
+\hline
+\endhead
+\hline
+\endfoot
+\hline
+\endlastfoot
+Muy bueno & 4.3 - 5.0 \\
+Malo & 3.1 - 3.6 \\
+No recomendado &  2.5 - 3.1\\
+Muy malo & 1.0 - 2.5
+\label {longtable:1}
+\end{longtable}
+
+Debido a la tendencia humana a evitar calificaciones perfectas, entre 4.3 y 4.5 se considera un objetivo de excelente calidad. En el extremo inferior, la calidad del audio o el video se vuelve inaceptable por debajo de un MOS de aproximadamente 3.5. \\
+
+Se utilizaron para la evaluación un total de 6 clips de audio obtenidos de un hablante real, y que expresan las siguientes frases:
+\begin{itemize}
+	\item Mis secretos obstáculos, mi miedo inconfesado al baile de máscaras, no se habían aminorado con el cine y sus estímulos, sino que habían crecido de un modo desagradable, y yo, pensando en Armanda, hube de hacer un esfuerzo.
+	\item Ya tengo de ti la sospecha de que tomas el amor terriblemente en serio.
+	\item Y, al fin y al cabo, todo lo que él quería era exactamente eso: conocer mundos nuevos.
+	\item Descubrí a un extraordinario muchachito que me observaba gravemente. Ahí tienen el mejor retrato que más tarde logré hacer de él. La culpa no es mía, las personas mayores me desanimaron cuando sólo había aprendido a dibujar boas cerradas y boas abiertas.
+	\item Cuando yo tenía seis años vi en el libro sobre la selva virgen: Historias vividas, una grandiosa estampa.Representaba una serpiente boa comiéndose a una fiera.
+	\item Pido perdón a los niños por haber dedicado este libro a una persona mayor. Tengo una muy seria disculpa: esta persona mayor es el mejor amigo que tengo en el mundo.
+\end{itemize}
+
+Se seleccionan estas señales por presentar rasgos característicos del idioma español y que se deben evaluar para arribar a una opinión acerca de si el discurso producido por un modelo en cuestión cumple con el objetivo de la investigación, principalmente en la pronunciación de tildes, y palabras con ñ, además de signos de puntuación.  
+
 
 
 \section{Creación de base de datos con voces cubanas.}
@@ -13,8 +47,8 @@ Con esto ya es suficiente para probar los modelos preentrenados disponibles de C
 
 \begin{itemize}
 	\item Debe cubrir una cantidad considerable de clips cortos y largos.
-	\item Libre de errores. Se debe eliminar cualquier archivo incorrecto o roto. 
-	\item Para escuchar una voz con la mayor naturalidad posible con todas las diferencias de frecuencia y tono, por ejemplo, usando diferentes signos de puntuación.
+	\item Libre de errores. Se debe eliminar cualquier archivo incorrecto o corrupto. 
+	\item Para escuchar una voz con la mayor naturalidad posible, usar las diferencias de frecuencia y tono, y signos de puntuación.
 	\item Es necesario que el \textit{dataset} cubra una buena parte de fonemas, difonemas y, en algunos idiomas, trifonemas. Si la cobertura de fonemas es baja, el modelo puede tener dificultades para pronunciar nuevas palabras difíciles.
 	\item Las muestras de la base de datos deben estar lo más limpio posible, es decir, se debe limpiar de ruido y cortar los espacios de tiempo entre expresiones,donde no se hable.
 	
@@ -22,9 +56,9 @@ Con esto ya es suficiente para probar los modelos preentrenados disponibles de C
 
 
 \subsubsection{Cuban Voice Dataset}
-La base de datos está conformada por 160 clips de audio con sus respectivas transcripciones recogidas en el archivo metadata.csv. Cada clip tiene una duración de 2 a 15 segundos, no más, para evitar sobrecargar los métodos que tienen que ver con la alineación.\\
+La base de datos está conformada por 160 clips de audio con sus respectivas transcripciones recogidas en el archivo metadata.csv. Cada clip tiene una duración de 2 a 15 segundos.\\
 
-Los clips de audio poseen formato .wav y se organizan dentro de una carpeta de nombre \textit{wavs} de la siguiente forma:
+Los clips de audio poseen formato .wav y se organizan dentro de una carpeta de nombre wavs de la siguiente forma:
 
 \begin{center}
 	/wavs\\
@@ -50,16 +84,12 @@ Las transcripciones se recogen dentro del archivo metadata.csv. Donde audio1, au
  Se adoptará en la conformación de la base de datos con voces cubanas, la misma estructura de la base de datos en Español de \textit{The M-AiLabs Speech Dataset}, pues algunos de los modelos que se utilizaron fueron preentrenados sobre estos conjuntos de datos. Finalmente queda la siguiente organización:
  
 \begin{flushleft}
-	MyDataset/by$\_$book/female/[creador del dataset]/[nombre del hablante]
+	/[Nombre del Dataset]/by$\_$book/female/[creador del dataset]/[nombre del hablante]
 	
 	|/wavs
 	
 	|metadata.csv
 \end{flushleft}
-
-
-
-
 
 
 \subsection{Procesamiento de audio}
@@ -69,17 +99,23 @@ Las transcripciones se recogen dentro del archivo metadata.csv. Donde audio1, au
 Se realizó un procesamiento para la eliminación de ruido en el audio del \textit{dataset} original, y se estableció una frecuencia de muestreo de acuerdo a las necesidades de cada experimento. 
 
 \section{Herramientas}
-\subsection{Colab}
+\subsection{Google Colab}
+Colaboratory, o Colab[\cite{colab}] para abreviar, es un producto de Google Research, que permite que cualquier persona escriba y ejecute código Python arbitrario a través del navegador y es especialmente adecuado para el aprendizaje automático, el análisis de datos y la educación. Más técnicamente, Colab es un servicio de notebook Jupyter que no requiere configuración para su uso, al tiempo que brinda acceso gratuito a los recursos informáticos, incluidas las GPU. Los recursos de Colab no están garantizados ni son ilimitados, y los límites de uso a veces fluctúan. Esta herramienta fue utilizada para el entrenamiento de modelos durante la investigación, y fue imprescindible el acceso a una suscripción de pago de Colab Pro y la compra de una gran cantidad de recursos. 
+
 \subsection{Google Drive}
-\subsection{Phonemizer espeak}
+Google Drive[\cite{drive}] es un espacio de almacenamiento que permite a los usuarios con cuenta de Google mantener archivos en la nube, y poder compartirlos entre sus distintos dispositivos. La encomienda de Drive en este trabajo fue almacenar las bases de datos utilizadas para los entrenamientos, así como los modelos y archivos de configuración e información que se generan a partir del entrenamiento de una red neuronal con las características de las DNN utilizadas en esta investigación.
+
+\subsection{Espeak phonemizer}
+\textbf{Espeak}[\cite{espeak}] es un \textit{software} de texto a voz que admite muchos idiomas y  es compatible con la salida IPA por sus siglas en inglés (\textit{International Phonetic Alphabet}(alfabeto fonético internacional).
+El phonemizer permite la fonemización simple de palabras y textos en muchos lenguajes.
 
 \section{Modificación en el código fuente de Coqui TTS}
-El código fuente del repositorio ocasionaba problemas al conformar ruta del archivo metadata.csv, por lo que se realizó un pequeño cambio en el método \texttt{mailabs} del archivo \texttt{formatter.py}
+El código fuente del repositorio ocasionaba problemas al conformar ruta del archivo metadata.csv, por lo que se realizó un pequeño cambio en el método \texttt{mailabs} del archivo \texttt{formatter.py}, quedando como se muestra en el siguiente código.
 
 
 \lstset{language=Python}
 \lstset{frame=lines}
-\lstset{caption={C\'odigos QR}}
+\lstset{caption={C\'odigo modificado formatter mailabs}}
 \lstset{label={lst:code_direct}}
 \lstset{basicstyle=\footnotesize}
 \begin{lstlisting}
@@ -137,56 +173,75 @@ return items
 \end{lstlisting}
 
 \section{Fine-Tuning de Tacontron-DDC}
-Como ya se expuso en otros capítulos, el \textit{fine-tuning} resulta una idea prometedora, pues en teoría salva tiempo y recursos.
+Como ya se mencionó en el capítulo anterior, el \textit{fine-tuning} resulta una idea prometedora, pues en teoría salva tiempo y recursos.
 
 Para el proceso de ajuste de Tacotron2 a la base de datos personalizada, se utilizó la configuración del modelo preentrenado en español sobre el \textit{dataset} de M-AILABS. 
 
 La frecuencia de muestreo(\textit{sample rate}) que se establece en la configuración es 16000Hz, pues el conjunto de datos de M-AILABS sobre el que se preentrenó el modelo seleccionado, se encuentra en esta misma frecuencia. Finalmente se debe utilizar un cargador de datos(\textit{formatter}) compatible con la base de datos usada, en este caso se selecciona la variante \texttt{mailabs}, que se puede apreciar en la sección anterior.
 
-El próximo paso es desacargar el modelo Tacotron2, para luego comenzar el reentrenamiento.
+El próximo paso es descargar el modelo Tacotron2, para luego comenzar el reentrenamiento.
 
-\texttt{tts - -model$\_$name tts$\_$models$/$es$/$mai$/$tacotron2-DDC - -text "Hola."}
+\texttt{tts - -model$\_$name tts$\_$models$/$es$/$mai$/$tacotron2-DDC - -text "Hola."}\\
 
 \texttt{> Downloading model to $/$home$/$ubuntu$/$.local$/$share$/$tts$/$tts$\_$models--en--ljspeech
 	--glow-tts}\\
 
-El reentrenamiento se llevó a cabo utilizando el GPU Premium de Google Colab, y CUDA. Requirió una gran cantidad de memoria RAM, siendo 25GB una cantidad insuficiente, se comprobó que con un procesador de 83GB de RAM, sí podía realizarse. El reentrenamiento fue extremandamente costoso, en tiempo y en \textit{computer units}\footnote{Una unidad de cómputo (CU) es la unidad de medida de los recursos consumidos por ejecuciones y compilaciones de actores.}, consumiendo más de 1000CU
+El reentrenamiento se llevó a cabo utilizando el GPU Premium de Google Colab, y CUDA[\cite{cuda}][\cite{cuda1}]. Requirió una gran cantidad de memoria RAM, siendo 25GB una cantidad insuficiente, se comprobó que con un procesador de 83GB de RAM, sí podía realizarse. El reentrenamiento fue extremandamente costoso, en tiempo y en \textit{computer units}\footnote{Una unidad de cómputo (CU) es la unidad de medida de los recursos consumidos por ejecuciones y compilaciones de actores.}, consumiendo más de 1000CU
 
-(Resultados)
+Los resultados son extremadamente lastimosos, el modelo entrenado por unas 160 \textit{epochs} produce una señal ruidosa, sin embargo en algún momento se puede distinguir alguna que otra sílaba. A partir de las 210 \textit{epochs} la salida del audio producida para una oración pequeña, es una señal corrupta donde no se distingue nada, este comportamiento se mantienen invariante hasta la \textit{epoch} 580. Se tenía previsto alcanzar las 2000 \textit{epochs}, pero debido a que el reentrenamiento consumía demasiados recursos y visto que los resultados no eran los deseados, no se continuó. 
 
--Con 160 epochs se escucha una grabación con mucho ruido, sin embargo en algún momento se puede distinguir alguna sílaba.
+Claramente el modelo Tacotron2 no se adapta a las necesidades de la investigación, ni a las características del \textit{dataset} conformado, y no cumplió las expectativas de ser un reentrenamiento veloz e iba a converger rápidamente en el nuevo conjunto por estar preentrenado en español. Y es por esto que se decide cambiar a otra red neuronal.
 
--Con 210 epochs algo pasa que las salidad para una oración son audios de 2 minutos donde solo se distingue ruido, y a partir de ahí para 451 y 580 epochs, este comportamiento se mantienen invariante. Se tenía previsto alcanzar las 2000 epochs, pero como el modelo consumía muchos recursos y los resultados no eran los deseados, no se continuó.
-
--Los resultados no podían estar más lejos de lo esperado, primero se pensaba que iba a ser un reentrenamiento veloz e iba a converger rápidamente en el nuevo dataset 
+(Vamos a evaluar con MOS)
+(Tablitas)
 
 \section{Entrenamiento de modelo VITS desde cero}
 Como los resultados de Tacotron2 no fueron los mejores, se optó por realizar experimentos con otros modelos, se eligió VITS por ser de los que mejores resultados arroja por encima de Tacotron2 y Glow-TTS[\cite{kim2021conditional}].
 
 Esta vez se entrena el modelo desde cero utilizando el conjunto de datos con voces cubanas, y la receta[\cite{train-vits}] que provee Coqui[\cite{coqui-doc}] para entrenar VITS. Para este entrenamiento, siguiendo ejemplos de entrenamientos anteriores, se cambia la frecuencia de muestreo del \textit{dataset} a 22050. Por otro lado el \textit{formatter} utilizado es la variante \texttt{mailabs}, que se encuentra en \texttt{formatters.py}
 
-El entrenamiento se produjo utilizando el GPU Premium de Google Colab, y CUDA. Requirió una gran cantidad de memoria RAM, siendo 25GB una cantidad insuficiente, se comprobó que con un procesador de 83GB de RAM, sí podía realizarse. Se produjo completa e ininterrumpidamente por 2000 \textit{epochs}, resultando en que el último mejor modelo se genera en la \textit{epoch} número 967. El entrenamiento no representó un gran costo, en tiempo y en \textit{computer units}, demorando alrededor de 7 horas y consumiendo alrededor de 200CU.
+El entrenamiento se produjo utilizando el GPU Premium de Google Colab, y CUDA[\cite{cuda}][\cite{cuda1}]. Requirió mucha memoria RAM, siendo 25GB una cantidad insuficiente, se comprobó que con un procesador de 83GB de RAM, sí podía realizarse. Transcurrión completa e ininterrumpidamente por 2000 \textit{epochs}, resultando en que el último mejor modelo se generó en la \textit{epoch} número 967. El entrenamiento no representó un gran costo, en tiempo y en \textit{computer units}, demorando alrededor de 7 horas y consumiendo alrededor de 200CU.
 
-Finalmente se obtiene un modelo que permite la emición de sonidos comprensibles, aunque no completamente inteligibles, pues produce un discurso robótico y tiene dificultad en la combinación de difonos, por lo que hay frases y palabras indescifrables para el oyente.
+Finalmente se obtiene un modelo que permite la emisión de sonidos comprensibles, aunque no completamente inteligibles, pues produce un discurso robótico y tiene dificultad en la combinación de difonos, por lo que hay frases y palabras indescifrables para el oyente.
 
+(Vamos a evaluar con MOS)
+(Tablitas)
 
 
 \section{Fine-tuning de modelos VITS preentrenados}
 
 \subsection{Modelo preentrenado en italiano}
-El modelo disponible en Coqui en idioma italiano fue preentrenado sobre la base de datos en italiano de M-AILABS, cuyas grabaciones poseen una frecuencia de muestreo de 16000Hz, por tanto el \textit{dataset} de voces cubanas que se utiliza para el \textit{fine-tuning} fue llevado a la misma frecuencia.
+El modelo disponible de Coqui en idioma italiano fue preentrenado sobre la base de datos en italiano de M-AILABS, cuyas grabaciones poseen una frecuencia de muestreo de 16000Hz, por tanto el \textit{dataset} de voces cubanas que se utiliza para el \textit{fine-tuning} fue llevado a la misma frecuencia.
 El \textit{formatter} utilizado es igualmente la variante \texttt{mailabs}.
 
-El proceso de \textit{fine-tuning} se llevó a cabo utilizando el GPU Premium de Google Colab, y CUDA. Requirió una gran cantidad de memoria RAM, siendo 25GB una cantidad insuficiente, no se precisa exactamente la cantidad de RAM necesaria, sin embargo, se comprobó que con un procesador de 83GB de RAM, sí podía realizarse sin problemas. Además de esto, no representó un gran costo, en tiempo y en \textit{computer units}, demorando alrededor de 3 horas y consumiendo alrededor de \textcolor{red}{CU}.
+El proceso de \textit{fine-tuning} se llevó a cabo utilizando el GPU Premium de Google Colab, y CUDA[\cite{cuda}][\cite{cuda1}]. Requirió una gran cantidad de memoria RAM, siendo 25GB una cantidad insuficiente, no se precisa exactamente la cantidad de RAM necesaria, sin embargo, se comprobó que con un procesador de 83GB de RAM, sí podía realizarse sin problemas. Además de esto, no representó un gran costo, en tiempo y en \textit{computer units}, demorando alrededor de 3 horas y consumiendo alrededor de 40CU.
 
-El modelo que se genera luego de un reentrenamiento inninterrumpido durante 1000 \textit{epochs}, arroja como resultado que, para una frase escrita dada, produce un discurso bastante comprensible, aunque un poco robótico, y entrecortado en alguna partes. Además con palabras que el oyente no puede descifrar. Es importante destacar que el modelo original de Coqui en italiano produce también una voz ruidosa, así que la cuestión del ruido es probable que venga desde el modelo inicial, agravada con el \textit{fine-tuning} a partir del \textit{Cuban Voice Dataset}.
+El modelo que se genera luego de un reentrenamiento ininterrumpido durante 1000 \textit{epochs}, arroja como resultado que, para una frase escrita dada, produce un discurso bastante comprensible, aunque un poco robótico, y entrecortado en alguna partes. Además con palabras que el oyente no puede descifrar. Es importante destacar que el modelo original de Coqui en italiano produce también una voz ruidosa, así que la cuestión del ruido es probable que venga desde el modelo inicial, agravada con el \textit{fine-tuning} a partir del \textit{Cuban Voice Dataset}.
+
+(Vamos a evaluar con MOS)
+(Tablitas)
 
 
 \subsection{Modelo preentrenado en Inglés}
-La variante del modelo VITS entrenada sobre el conjunto LJ-Speech Dataset en inglés, se seleccionó por ser el inglés un idioma, más distante del español que el italiano. Se lleva a cabo el mismo proceso que en los caso anterior, con la diferencia de que la base de datos \textit{Cuban Voice Dataset} cambia su frecuencia de muestreo a 22050Hz. 
+La variante del modelo VITS entrenada sobre el conjunto LJ-Speech Dataset en inglés, se seleccionó por ser el inglés un idioma, más distante del español que el italiano. Se lleva a cabo el mismo proceso que en el caso anterior, con la diferencia de que la base de datos \textit{Cuban Voice Dataset} cambia su frecuencia de muestreo a 22050Hz. 
 El reentrenamiento se realizó siguiendo las mismas características que en el modelo en italiano, y consumió alrededor del mismo tiempo y recursos.
 
-Para terminar el modelo del inglés ajustado a la base de datos cubana arroja diferentes resultados que el modelo que se obtiene a partir del modelo italiano. Una ventaja es que el ruido, y la pronunciación robótica no están presentes en el nuevo discurso, y la voz sintética suena bastante parecida a la del hablante del conjunto de datos, está es un objetivo que hasta este punto no había sido alcanzado. Sin embargo, y como era de esperar gramaticalmente y fonéticamente presenta más problemas, entre ellos la pronunciación de la ñ y las r unidas a vocales, entre otros bastante evidentes al escuchar la salida.
+Por último el modelo en inglés ajustado a la base de datos cubana arroja resultados diferentes al modelo que se obtiene a partir del modelo italiano. Un aspecto a favor es que el ruido, y la pronunciación robótica no están presentes en el nuevo discurso, y la voz sintética suena bastante parecida a la del hablante, un objetivo que hasta este punto no había sido alcanzado. Sin embargo, y como era de esperar, gramatical y fonéticamente presenta más problemas, entre ellos la pronunciación de la ñ y las r unidas a vocales, entre otros bastante evidentes al escuchar la salida de audio.
 
+(Vamos a evaluar con MOS)
+(Tablitas)
 
 \section{Entrenamiento con M-AILABS DATASET}
+Se comienza a sospechar, que probablemente la base de datos \textit{Cuban Voice Dataset} no cuente con la riqueza necesaria para que un modelo realice un aprendizaje adecuado que reporte resultados aceptables. Debido a esto se considera la idea de realizar un entrenamiento desde cero sobre modelo VITS utilizando el conjunto de datos de \textit{The M-AILABS Dataset} con su única voz femenina Angelina, este conjunto cuenta con más de 7000 clips de audio para el entrenamiento, con un \textit{sample rate} de 16000Hz.
+
+El entrenamiento se realiza nuevamente en Google Colab, con las mismas características de los anteriores, aunque, esta vez por la densidad de la base de datos el proceso demora más, tomando alrededor de 12 horas para llegar a 321 \textit{epochs}, y consumiendo una cantidad proporcional de recursos. El modelo que se obtiene produce una señal inteligible y libre de ruidos, aunque mejorable en algunas expresiones, pues la meta ideal sería un entrenamiento de 1000 \textit{epochs}.
+
+Con un modelo que arroja resultados bastante buenos, se procede a realizar \textit{fine-tuning} sobre la base de datos construida con un hablante cubano, se efectua con misma configuración que el entrenamiento anterior, por alrededor de 1000 \textit{epochs}, y arroja los mejores resultados obtenidos sobre este conjunto de datos. Sin embargo, tampoco se consideran buenos, pues aunque se elimina el ruido en las grabaciones, muchas palabras resultan indescifrables para el oyente.\\
+
+Para concluir se puede declarar que Tacotron2 parece ser una red demasiado grande que no se adapta a las necesidades de la investigación, produciendo finalmente señales corruptas e indescifrables.
+
+El modelo VITS es significativamente más rápido en lo que respecta a la velocidad del entrenamiento, y además más adaptable a nuevos conjuntos de datos. Con un entrenamiento desde cero sobre una base de datos relativamente pequeña y rústica, produce un discurso bastante malo, aunque entendible en ocasiones. De forma similar sucede con el modelo VITS preentrenado en italiano y luego sometido a un proceso de \textit{fine-tuning} con el conjunto mencionado anteriormente, a pesar de la rapidez del entrenamiento, produce una señal algo ruidosa, y solo entendible en ocasiones. El mejor resultado con diferencia es el producido por el modelo VITS entrenado desde cero con una base de datos fuerte, aunque este no cumple con el objetivo de la investigación pues la voz corresponde a un hablante mexicano. El discurso obtenido de este modelo recibe la mayor medida MOS. Al mismo tiempo al realizar \textit{fine-tuning} sobre este modelo con la base de datos cubana, el audio empeora y resulta incomprensible en ocasiones. Debe ser aclarado que este último modelo es el mejor resultado obtenido sobre el conjunto de datos conformado con voces cubanas, con la obtención de grabaciones libres de ruido. 
+
+
+
+
