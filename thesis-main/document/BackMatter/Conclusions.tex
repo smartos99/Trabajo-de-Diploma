@@ -1,9 +1,14 @@
-\begin{conclusions}
-    -Ninguna de las ideas implementadas fue completamente satisfactoria
+\begin{conclusions}    
+Esta investigación tenía como objetivo el desarrollo de un sistema de síntesis de texto a voz en español, que sintetizara una voz con acento cubano. Se realizó un estudio de las tecnologías existentes para realizar la síntesis de voz, arribando a la conclusión que los últimos estudios basados en redes neuronales, eran los más adecuados para este trabajo por ser los que mejores resultados presentaban. Mediante un análisis de los métodos TTS basados en redes neuronales, y las bibliotecas disponibles para este fin, se selecciona Coqui como herramienta base. 
+
+Se comprueba que todos los modelos TTS disponibles en Coqui, necesitan para su entrenamiento una base de datos de audio con sus transcripciones correspondientes. Para cumplir la meta de generar una voz con acento cubano se conformó una base de datos con un hablante cubano, que contó con 160 clips de audio. En comparación con las bases de datos fuentes disponibles, esta fue relativamente pequeña. 
+
+Se procedió entonces al reentrenamiento del modelo basado en síntesis neuronal. El modelo VITS se muestra ser la selección correcta luego de realizar experimentos no satisfactorios con el modelo Tacotron2. Se entrenan desde cero y reentrenan un número de 5 modelos VITS, para comprobar los mejores resultados. Finalmente se evalúa mediante la opinión de expertos la calidad del audio producido por estos modelos, utilizando la medida MOS. Los mejores resultados fueron arrojados por el modelo entrenado desde cero con una base de datos fuente de M-AILABS, sin embargo este no cumple con el requisito del acento cubano. Ninguno de los modelos entrenados con la base de datos construida con voces cubanas, produjo resultados completamente satisfactiorios, quedando como más aceptable el obtenido mediante el ajuste del modelo entrenado con la base de datos fuente, al conjunto de datos construido para este trabajo.
+
+Concluimos que el mayor peso para lograr una síntesis de datos apropiada recae sobre el conjunto de datos para el entrenamiento. Y se recomienda para el mejoramiento de este trabajo la construcción de una nueva base de datos con voces cubanas más extensa, que cuente con una mayor riqueza del idioma español. 
+
+Los anteriores elementos contribuyeron al cumplimiento del objetivo general, dar los primeros pasos hacia el desarrollo de un sintetizador de texto a voz con voces cubanas. 
     
-    -El mejor resultado fue el de finetuning a angelina
-    
-    - Es necesario un buen poder de computo
     
    
 \end{conclusions}

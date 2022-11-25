@@ -6,7 +6,7 @@ Coqui [\cite{coqui-doc}] es un repositorio de código abierto que implementa las
 La biblioteca se instala de acuerdo a las instrucciones orientadas a desarrolladores en [\cite{coqui-doc}].
 Con esto ya es suficiente para probar los modelos preentrenados disponibles de Coqui.
 
-\section{Configuración de la evaluación de los modelos}
+\section{Configuración de la evaluación de los modelos} \label{eval}
 Se utiliza la medida MOS para la evaluación de los modelos obtenidos en este trabajo. Un puntaje de opinión promedio[\cite{mos}][\cite{mos1}] (MOS, del inglés \textit{Mean Opinion Score}) es una medida numérica de la calidad general de un evento o experiencia juzgada por humanos. En telecomunicaciones, MOS es terminología para clasificación de calidad de audio y video, se refiere a la calidad de escuchar, hablar o conversar, ya sea que se originen en modelos subjetivos u objetivos. Y se evalua de la siguiente forma:
  
   \begin{longtable} [c] { | c | c | }
@@ -28,14 +28,14 @@ Muy malo & 1.0 - 2.5
 Debido a la tendencia humana a evitar calificaciones perfectas, entre 4.3 y 4.5 se considera un objetivo de excelente calidad. En el extremo inferior, la calidad del audio o el video se vuelve inaceptable por debajo de un MOS de aproximadamente 3.5. \\
 
 Se utilizaron para la evaluación un total de 6 clips de audio obtenidos de un hablante real, y que expresan las siguientes frases:
-\begin{itemize}
-	\item Mis secretos obstáculos, mi miedo inconfesado al baile de máscaras, no se habían aminorado con el cine y sus estímulos, sino que habían crecido de un modo desagradable, y yo, pensando en Armanda, hube de hacer un esfuerzo.
-	\item Ya tengo de ti la sospecha de que tomas el amor terriblemente en serio.
-	\item Y, al fin y al cabo, todo lo que él quería era exactamente eso: conocer mundos nuevos.
-	\item Descubrí a un extraordinario muchachito que me observaba gravemente. Ahí tienen el mejor retrato que más tarde logré hacer de él. La culpa no es mía, las personas mayores me desanimaron cuando sólo había aprendido a dibujar boas cerradas y boas abiertas.
-	\item Cuando yo tenía seis años vi en el libro sobre la selva virgen: Historias vividas, una grandiosa estampa.Representaba una serpiente boa comiéndose a una fiera.
-	\item Pido perdón a los niños por haber dedicado este libro a una persona mayor. Tengo una muy seria disculpa: esta persona mayor es el mejor amigo que tengo en el mundo.
-\end{itemize}
+\begin{enumerate}
+	\item Mis secretos obstáculos, mi miedo inconfesado al baile de máscaras, no se habían aminorado con el cine y sus estímulos, sino que habían crecido de un modo desagradable, y yo, pensando en Armanda, hube de hacer un esfuerzo. \label{sentence1}
+	\item Ya tengo de ti la sospecha de que tomas el amor terriblemente en serio. \label{sentence2}
+	\item Y, al fin y al cabo, todo lo que él quería era exactamente eso: conocer mundos nuevos. \label{sentence3}
+	\item Descubrí a un extraordinario muchachito que me observaba gravemente. Ahí tienen el mejor retrato que más tarde logré hacer de él. La culpa no es mía, las personas mayores me desanimaron cuando sólo había aprendido a dibujar boas cerradas y boas abiertas. \label{sentence4}
+	\item Cuando yo tenía seis años vi en el libro sobre la selva virgen: Historias vividas, una grandiosa estampa.Representaba una serpiente boa comiéndose a una fiera. \label{sentence5}
+	\item Pido perdón a los niños por haber dedicado este libro a una persona mayor. Tengo una muy seria disculpa: esta persona mayor es el mejor amigo que tengo en el mundo. \label{sentence6}
+\end{enumerate}
 
 Se seleccionan estas señales por presentar rasgos característicos del idioma español y que se deben evaluar para arribar a una opinión acerca de si el discurso producido por un modelo en cuestión cumple con el objetivo de la investigación, principalmente en la pronunciación de tildes, y palabras con ñ, además de signos de puntuación.  
 
@@ -103,7 +103,7 @@ Se realizó un procesamiento para la eliminación de ruido en el audio del \text
 Colaboratory, o Colab[\cite{colab}] para abreviar, es un producto de Google Research, que permite que cualquier persona escriba y ejecute código Python arbitrario a través del navegador y es especialmente adecuado para el aprendizaje automático, el análisis de datos y la educación. Más técnicamente, Colab es un servicio de notebook Jupyter que no requiere configuración para su uso, al tiempo que brinda acceso gratuito a los recursos informáticos, incluidas las GPU. Los recursos de Colab no están garantizados ni son ilimitados, y los límites de uso a veces fluctúan. Esta herramienta fue utilizada para el entrenamiento de modelos durante la investigación, y fue imprescindible el acceso a una suscripción de pago de Colab Pro y la compra de una gran cantidad de recursos. 
 
 \subsection{Google Drive}
-Google Drive[\cite{drive}] es un espacio de almacenamiento que permite a los usuarios con cuenta de Google mantener archivos en la nube, y poder compartirlos entre sus distintos dispositivos. La encomienda de Drive en este trabajo fue almacenar las bases de datos utilizadas para los entrenamientos, así como los modelos y archivos de configuración e información que se generan a partir del entrenamiento de una red neuronal con las características de las DNN utilizadas en esta investigación.
+Google Drive[\cite{drive}] es un espacio de almacenamiento que permite a los usuarios con cuenta de Google mantener archivos en la nube, y poder compartirlos entre sus distintos dispositivos. La encomienda de Drive en este trabajo fue almacenar las bases de datos utilizadas para los entrenamientos, así como los modelos y archivos de configuración e información que se generan a partir del entrenamiento de una red neuronal profunda con las características de las DNN utilizadas en esta investigación.
 
 \subsection{Espeak phonemizer}
 \textbf{Espeak}[\cite{espeak}] es un \textit{software} de texto a voz que admite muchos idiomas y  es compatible con la salida IPA por sus siglas en inglés (\textit{International Phonetic Alphabet}(alfabeto fonético internacional).
@@ -190,10 +190,8 @@ El reentrenamiento se llevó a cabo utilizando el GPU Premium de Google Colab, y
 
 Los resultados son extremadamente lastimosos, el modelo entrenado por unas 160 \textit{epochs} produce una señal ruidosa, sin embargo en algún momento se puede distinguir alguna que otra sílaba. A partir de las 210 \textit{epochs} la salida del audio producida para una oración pequeña, es una señal corrupta donde no se distingue nada, este comportamiento se mantienen invariante hasta la \textit{epoch} 580. Se tenía previsto alcanzar las 2000 \textit{epochs}, pero debido a que el reentrenamiento consumía demasiados recursos y visto que los resultados no eran los deseados, no se continuó. 
 
-Claramente el modelo Tacotron2 no se adapta a las necesidades de la investigación, ni a las características del \textit{dataset} conformado, y no cumplió las expectativas de ser un reentrenamiento veloz e iba a converger rápidamente en el nuevo conjunto por estar preentrenado en español. Y es por esto que se decide cambiar a otra red neuronal.
+Claramente el modelo Tacotron2 no se adapta a las necesidades de la investigación, ni a las características del \textit{dataset} conformado, y no cumplió las expectativas de ser un reentrenamiento veloz e iba a converger rápidamente en el nuevo conjunto por estar preentrenado en español. Y es por esto que se decide cambiar a otra DNN.
 
-(Vamos a evaluar con MOS)
-(Tablitas)
 
 \section{Entrenamiento de modelo VITS desde cero}
 Como los resultados de Tacotron2 no fueron los mejores, se optó por realizar experimentos con otros modelos, se eligió VITS por ser de los que mejores resultados arroja por encima de Tacotron2 y Glow-TTS[\cite{kim2021conditional}].
@@ -202,10 +200,25 @@ Esta vez se entrena el modelo desde cero utilizando el conjunto de datos con voc
 
 El entrenamiento se produjo utilizando el GPU Premium de Google Colab, y CUDA[\cite{cuda}][\cite{cuda1}]. Requirió mucha memoria RAM, siendo 25GB una cantidad insuficiente, se comprobó que con un procesador de 83GB de RAM, sí podía realizarse. Transcurrión completa e ininterrumpidamente por 2000 \textit{epochs}, resultando en que el último mejor modelo se generó en la \textit{epoch} número 967. El entrenamiento no representó un gran costo, en tiempo y en \textit{computer units}, demorando alrededor de 7 horas y consumiendo alrededor de 200CU.
 
-Finalmente se obtiene un modelo que permite la emisión de sonidos comprensibles, aunque no completamente inteligibles, pues produce un discurso robótico y tiene dificultad en la combinación de difonos, por lo que hay frases y palabras indescifrables para el oyente.
+Se obtiene un modelo que permite la emisión de sonidos comprensibles, aunque no completamente inteligibles, pues produce un discurso robótico y tiene dificultad en la combinación de difonos, por lo que hay frases y palabras indescifrables para el oyente.
 
-(Vamos a evaluar con MOS)
-(Tablitas)
+Finalmente se sometió el modelo, al proceso de evaluación descrito en la sección \ref{eval} con la medida MOS, arrojando los siguientes resultados:
+
+\begin{center} \begin{tabular}{ |c|c|c| } 
+\hline 
+Muestra & Medida MOS \\
+\hline
+frase \ref{sentence1} & 2.5 \\
+frase \ref{sentence2} & 2.0 \\
+frase \ref{sentence3} & 2.5 \\
+frase \ref{sentence4} & 1.0 \\
+frase \ref{sentence5} & 1.0 \\
+frase \ref{sentence6} & 1.0 \\
+ \hline 
+\end{tabular} 
+\end{center}
+
+Se demuestra que el entrenamiento del modelo VITS desde cero con los datos descritos, es desalentador.
 
 
 \section{Fine-tuning de modelos VITS preentrenados}
@@ -218,8 +231,23 @@ El proceso de \textit{fine-tuning} se llevó a cabo utilizando el GPU Premium de
 
 El modelo que se genera luego de un reentrenamiento ininterrumpido durante 1000 \textit{epochs}, arroja como resultado que, para una frase escrita dada, produce un discurso bastante comprensible, aunque un poco robótico, y entrecortado en alguna partes. Además con palabras que el oyente no puede descifrar. Es importante destacar que el modelo original de Coqui en italiano produce también una voz ruidosa, así que la cuestión del ruido es probable que venga desde el modelo inicial, agravada con el \textit{fine-tuning} a partir del \textit{Cuban Voice Dataset}.
 
-(Vamos a evaluar con MOS)
-(Tablitas)
+Por último se realiza el proceso de evaluación descrito en la sección \ref{eval} con la medida MOS, arrojando los siguientes resultados:
+
+\begin{center} \begin{tabular}{ |c|c|c| } 
+		\hline 
+		Muestra & Medida MOS \\
+		\hline
+		frase \ref{sentence1} & 3.0 \\
+		frase \ref{sentence2} & 2.7 \\
+		frase \ref{sentence3} & 2.6 \\
+		frase \ref{sentence4} & 2.2 \\
+		frase \ref{sentence5} & 2.1 \\
+		frase \ref{sentence6} & 2.3 \\
+		\hline 
+	\end{tabular} 
+\end{center}
+
+Se evidencia una mejora en los resultados, con respecto al modelo anterior. Esto es debido a que el modelo ya tenía aprendido características del idioma italiano, que es uno de los más similares al español.
 
 
 \subsection{Modelo preentrenado en Inglés}
@@ -228,15 +256,72 @@ El reentrenamiento se realizó siguiendo las mismas características que en el m
 
 Por último el modelo en inglés ajustado a la base de datos cubana arroja resultados diferentes al modelo que se obtiene a partir del modelo italiano. Un aspecto a favor es que el ruido, y la pronunciación robótica no están presentes en el nuevo discurso, y la voz sintética suena bastante parecida a la del hablante, un objetivo que hasta este punto no había sido alcanzado. Sin embargo, y como era de esperar, gramatical y fonéticamente presenta más problemas, entre ellos la pronunciación de la ñ y las r unidas a vocales, entre otros bastante evidentes al escuchar la salida de audio.
 
-(Vamos a evaluar con MOS)
-(Tablitas)
+Se realiza el proceso de evaluación descrito en la sección \ref{eval} con la medida MOS, arrojando los siguientes resultados:
+
+\begin{center} \begin{tabular}{ |c|c|c| } 
+		\hline 
+		Muestra & Medida MOS \\
+		\hline
+		frase \ref{sentence1} & 1.5 \\
+		frase \ref{sentence2} & 2.7 \\
+		frase \ref{sentence3} & 3.7 \\
+		frase \ref{sentence4} & 2.0 \\
+		frase \ref{sentence5} & 1.9 \\
+		frase \ref{sentence6} & 2.2 \\
+		\hline 
+	\end{tabular} 
+\end{center}
+
+Los resultados son ligeramente peores que con el \textit{fine-tuning} del modelo preentrenado en italiano. No resulta una gran sorpresa pues el inglés es un idioma más distante al español.
 
 \section{Entrenamiento con M-AILABS DATASET}
 Se comienza a sospechar, que probablemente la base de datos \textit{Cuban Voice Dataset} no cuente con la riqueza necesaria para que un modelo realice un aprendizaje adecuado que reporte resultados aceptables. Debido a esto se considera la idea de realizar un entrenamiento desde cero sobre modelo VITS utilizando el conjunto de datos de \textit{The M-AILABS Dataset} con su única voz femenina Angelina, este conjunto cuenta con más de 7000 clips de audio para el entrenamiento, con un \textit{sample rate} de 16000Hz.
 
 El entrenamiento se realiza nuevamente en Google Colab, con las mismas características de los anteriores, aunque, esta vez por la densidad de la base de datos el proceso demora más, tomando alrededor de 12 horas para llegar a 321 \textit{epochs}, y consumiendo una cantidad proporcional de recursos. El modelo que se obtiene produce una señal inteligible y libre de ruidos, aunque mejorable en algunas expresiones, pues la meta ideal sería un entrenamiento de 1000 \textit{epochs}.
 
-Con un modelo que arroja resultados bastante buenos, se procede a realizar \textit{fine-tuning} sobre la base de datos construida con un hablante cubano, se efectua con misma configuración que el entrenamiento anterior, por alrededor de 1000 \textit{epochs}, y arroja los mejores resultados obtenidos sobre este conjunto de datos. Sin embargo, tampoco se consideran buenos, pues aunque se elimina el ruido en las grabaciones, muchas palabras resultan indescifrables para el oyente.\\
+Con un modelo que arroja resultados bastante buenos, se procede a realizar \textit{fine-tuning} sobre la base de datos construida con un hablante cubano, se efectua con misma configuración que el entrenamiento anterior, por alrededor de 1000 \textit{epochs}, y arroja los mejores resultados obtenidos sobre este conjunto de datos. Sin embargo, tampoco se consideran buenos, pues aunque se elimina el ruido en las grabaciones, muchas palabras resultan indescifrables para el oyente.
+
+A continuación las evaluaciónes de expertos utilizando la medida MOS:
+
+
+\begin{table}[H]
+	\begin{center} 
+\begin{tabular}{ |c|c| } 
+	\hline
+	Muestra & Medida MOS \\
+	\hline
+	frase \ref{sentence1} & 4.3 \\
+	frase \ref{sentence2} & 4.4 \\
+	frase \ref{sentence3} & 4.4 \\
+	frase \ref{sentence4} & 4.3 \\
+	frase \ref{sentence5} & 4.3 \\
+	frase \ref{sentence6} & 4.4 \\
+	\hline
+\end{tabular}
+\caption{Resultados de modelo VITS entrenado desde cero con la base de datos de M-AILABS} 
+\end{center}
+\end{table}
+	
+\begin{table}[H]
+	\begin{center} 
+		\begin{tabular}{ |c|c| } 
+			\hline
+			Muestra & Medida MOS \\
+			\hline
+			frase \ref{sentence1} & 2.5 \\
+			frase \ref{sentence2} & 2.8 \\
+			frase \ref{sentence3} & 4.1 \\
+			frase \ref{sentence4} & 3.6 \\
+			frase \ref{sentence5} & 2.3 \\
+			frase \ref{sentence6} & 3.5 \\
+			\hline
+		\end{tabular}
+		\caption{Resultados del fine-tuning al modelo VITS entrenado desde cero con la base de datos de M-AILABS} 
+	\end{center}
+\end{table}
+
+Las mejores puntuaciones las recibe el modelo entrenado con la base de datos fuente, de aquí la importancia del conjunto de datos para el entrenamiento de modelos.\\
+
 
 Para concluir se puede declarar que Tacotron2 parece ser una red demasiado grande que no se adapta a las necesidades de la investigación, produciendo finalmente señales corruptas e indescifrables.
 

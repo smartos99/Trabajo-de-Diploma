@@ -1,23 +1,24 @@
 \chapter{Sistemas para la síntesis texto a voz}\label{chapter:state-of-the-art}
 
-Las redes neuronales han sido las encargadas de los avances actuales en el campo TTS, por tanto esta será la línea seguida en la investigación. \\
+Las redes neuronales profundas han sido las encargadas de los avances actuales en el campo TTS, por tanto esta será la línea seguida en la investigación. \\
 
-Para lograr la transformación de texto a voz, se siguen dos enfoques distintos. El primero es un sistema de dos estapas: una combinación de dos redes neuronales, una para convertir de texto a espectograma de mel, y luego otra que transforma el espectograma en onda sonora; y el segundo es un modelo de extremo a extremo.  
+En este capítulo se realiza un análisis profundo de las que a criterio del autor son los modelos más efectivos para la conversión de texto a voz. Para lograr la transformación de texto a voz, se siguen dos enfoques distintos. El primero es un sistema de dos etapas: una combinación de dos redes neuronales profundas, una para convertir de texto a espectograma a escala de mel\footnote{La Escala Mel, propuesta por Stevens, Volkman y Newmann en 1937, es una escala musical perceptual del tono a juicio de observadores equiespaciados.} y luego otra que transforma el espectograma en onda sonora, en la sección \ref{two-stages} se exponen varios de los modelos correspondientes a cada etapa. El segundo criterio es un modelo de extremo a extremo que se explica en la sección \ref{end-to-end}
 
-\section{Sistemas de dos etapas}
+\section{Sistemas de dos etapas} \label{two-stages}
 
-El paradigma predominante en la conversión de texto a voz es la síntesis en dos etapas, es decir, primero, producir espectrogramas a escala de mel a partir del texto y, luego las ondas de sonido reales con un modelo de codificador de voz(\textit{VoCoder}. La representación acústica de bajo nivel, espectograma de mel, es la utilizada como nexo entre las dos componentes.
+El paradigma predominante en la conversión de texto a voz es la síntesis en dos etapas, es decir, primero, producir espectrogramas de mel a partir del texto y, luego las ondas de sonido reales con un modelo de codificador de voz(\textit{VoCoder}. La representación acústica de bajo nivel, espectograma de mel, es la utilizada como nexo entre las dos componentes.
 
 
 \subsection{Modelos TTS}
+La etapa 1, es la encargada de la obtención de espectrogramas representativos a la entrada de texto del modelo. 
 
 \subsubsection{Tacotron}
 
-Tacotron[\cite{wang2017tacotron}] es un modelo TTS de tipo secuencia a secuencia con un paradigma de atención. Este modelo toma caracteres como entrada y devuelve un espectograma sin procesar usando técnicas para mejorar un modelo seq2seq\footnote{Seq2Seq se basa en el paradigma codificador-decodificador. El codificador codifica la secuencia de entrada, mientras que el decodificador produce la secuencia de destino. codificador} vainilla\footnote{En informática, vainilla es el término utilizado cuando el \textit{software} o los algoritmos, no se emplean a partir de su forma original.}. Dado un par <texto,audio>, Tacotron puede ser entrenado desde cero con una inicialización aleatoria, y no requiere alineación a nivel de fonema.\\
+Tacotron[\cite{wang2017tacotron}] es una DNN entrenada para obtener un espectrograma a partir de una frase de entrada. Es de tipo secuencia a secuencia con un paradigma de atención. Este modelo toma caracteres como entrada y devuelve un espectograma sin procesar usando técnicas para mejorar un modelo seq2seq\footnote{Seq2Seq se basa en el paradigma codificador-decodificador. El codificador codifica la secuencia de entrada, mientras que el decodificador produce la secuencia de destino. codificador} vainilla\footnote{En informática, vainilla es el término utilizado cuando el \textit{software} o los algoritmos, no se emplean a partir de su forma original.}. Dado un par <texto,audio>, Tacotron puede ser entrenado desde cero con una inicialización aleatoria, y no requiere alineación a nivel de fonema.\\
 
-La columna vertebral de Tacotron es un modelo seq2seq con atención, que toma caracteres como entrada, y devuelve el correspondiente espectograma sin procesar, para luego pasarlo al modelo o algoritmo que sinteiza la voz. En el centro de todo esto se encuentra un codificador,un decodificador basado en atención y una red de post procesamiento.\\
+La columna vertebral de Tacotron es un modelo seq2seq con atención, que toma caracteres como entrada, y devuelve el correspondiente espectograma sin procesar, para luego pasarlo al modelo o algoritmo que sinteiza la voz. \\
 
-Tacotron se basa en cuadros, o \textit{frames}, por lo que la inferencia es sustancialmente más rápida que los métodos autorregresivos a nivel de muestra. A diferencia de otras tecnologías TTS más antiguas, Tacotron no necesita características lingüísticas diseñadas a mano ni componentes complejos como un alineador de Modelo Markov oculto(HMM). Este modelo realiza una normalización de texto simple.
+Tacotron se basa en cuadros, o \textit{frames}, por lo que la inferencia es sustancialmente más rápida que los métodos autorregresivos a nivel de muestra. A diferencia de otras tecnologías TTS más antiguas, Tacotron no necesita características lingüísticas diseñadas a mano ni componentes complejos, este modelo realiza una normalización de texto simple.
 
 
 \subsubsection{Tacotron 2}
@@ -30,7 +31,7 @@ El uso de una escala de frecuencia auditiva de este tipo tiene el efecto de enfa
 
 Para Tacotron2 los espectrogramas de mel se calculan a través de un transformada de Fourier de tiempo corto (STFT). \\
 
-La red del modelo en cuestión está compuesta por un codificador y un decodificador con atención. El codificador convierte una secuencia de caracteres en una representación oculta que alimenta al decodificador para predecir un espectrograma. Los caracteres de entrada se representan utilizando una incrustación de caracteres. La salida del codificador es consumida por una red de atención que resume la secuencia codificada completa como un vector de contexto de longitud fija para cada paso de salida del decodificador. Se usa la atención sensible a la ubicación de [\cite{chorowski2015attention}], que extiende el mecanismo de atención aditiva [\cite{bahdanau2014neural}] para usar pesos de atención acumulativos de anteriores pasos de tiempo del decodificador como una funcionalidad adicional. Esto anima al modelo a seguir adelante consistentemente a través de la entrada, mitigando los posibles modos de falla donde algunas subsecuencias son repetidas o ignoradas por el decodificador.
+La DNN del modelo Tacotron2 está compuesto por un codificador y un decodificador con atención. El codificador convierte una secuencia de caracteres en una representación oculta que alimenta al decodificador para predecir un espectrograma. Los caracteres de entrada se representan utilizando una incrustación de caracteres. La salida del codificador es consumida por una red de atención que resume la secuencia codificada completa como un vector de contexto de longitud fija para cada paso de salida del decodificador.
 
 El decodificador es una red neuronal autorregresiva recurrente que predice un espectrograma de mel a partir de la secuencia de entrada codificada un fotograma a la vez. 
 
@@ -38,13 +39,13 @@ Este sistema puede ser entrenado directamente desde un conjunto de datos sin dep
 
 
 \subsubsection{Deep Voice 1, 2, 3}
-Deep Voice de Baidu[\cite{deep-voice}][\cite{arik2018neural}] sentó las bases para los avances posteriores en la síntesis de voz de extremo a extremo. Consta de 4 redes neuronales diferentes que juntas forman un extremo de la canalización: un modelo de segmentación que localiza los límites entre fonemas,un modelo que convierte grafemas en fonemas, un modelo para predecir la duración de los fonemas y las frecuencias fundamentales, y un modelo para sintetizar el audio final.
+Deep Voice de Baidu[\cite{deep-voice}][\cite{arik2018neural}] sentó las bases para los avances posteriores en la síntesis de voz de extremo a extremo. Consta de 4 redes neuronales profundas diferentes que juntas forman un extremo de la canalización: un modelo de segmentación que localiza los límites entre fonemas,un modelo que convierte grafemas en fonemas, un modelo para predecir la duración de los fonemas y las frecuencias fundamentales, y un modelo para sintetizar el audio final.
 
 Deep Voice 2 [\cite{arik2018neural}]  se presentó como una mejora de la arquitectura original de Deep Voice. Si bien la canalización principal era bastante similar, cada modelo se creó desde cero para mejorar su rendimiento. Otra gran mejora fue la adición de compatibilidad con varios hablantes.
 
 Deep Voice 3 [\cite{arik2018neural}][\cite{deep-voice3}] es un rediseño completo de las versiones anteriores. Aquí se tiene un solo modelo en lugar de cuatro diferentes. Más específicamente, los autores propusieron una arquitectura de caracter a espectrograma completamente convolucional que es ideal para el cálculo paralelo. A diferencia de los modelos basados en RNN. También se experimentó con diferentes métodos de síntesis de forma de onda con WaveNet logrando los mejores resultados una vez más.
 
-\subsubsection{Modelos TTS con Transformers}
+\subsubsection{Transformers}
 Los transformadores(\textit{transformers}), están dominando el campo del lenguaje natural desde hace un tiempo, por lo que era inevitable que ingresaran gradualmente al campo TTS. Los modelos basados en transformadores tienen como objetivo abordar dos problemas de los métodos TTS anteriores, como Tacotron2:
 
 \begin{itemize}
@@ -126,35 +127,29 @@ Usando espectrogramas de mel de banda completa como entrada, se espera generar s
 WaveGrad[\cite{chen2020wavegrad}] es un modelo condicional para la generación de formas de onda que estima los gradientes de la densidad de datos. El modelo se basa en trabajos previos sobre emparejamiento de puntuaciones y modelos probabilísticos de difusión. Parte de una señal Gaussiana de ruido blanco e iterativamente refina la señal a través de un muestreador basado en gradientes, condicionado en el espectrograma de mel. WaveGrad ofrece una forma natural de intercambiar velocidad de referencia por calidad de la muestra ajustando el número de pasos de refinamiento, y cierra la brecha entre los modelos autorregresivos y no autorregresivos en términos de calidad de audio. El modelo puede generar muestras de audio de alta fidelidad usando como tan solo seis iteraciones. Los experimentos revelan que WaveGrad genera señales de audio de alta fidelidad, superando las líneas de base adversariales no autorregresivas y emparejando un fuertemente la línea de base autorregresiva basada en la probabilidad, utilizando menos operaciones secuenciales.
 
 
-\section{Modelos de extremo a extremo}
-
-\subsection{YourTTS}
+\section{Modelos de extremo a extremo} \label{end-to-end}
 
 \subsection{VITS}
 
-\textit{Variational Inference with adversarial learning for end-to-end Text-to-Speech (VITS)}[\cite{kim2021conditional}] es un método TTS de extremo a extremo en paralelo. Usando un Autocodificador Variacional se conectan los dos módulos de sistemas TTS: modelo acústico y VoCoder, a través de variables latentes para permitir el aprendizaje de extremo a extremo. 
-
-Para mejorar el poder expresivo del método con el fin de sintetizar formas de onda de voz de alta calidad, se aplican flujos de normalización a la distribución condicional previa y entrenamiento adversarial en el dominio de formas de ondas.
+\textit{Variational Inference with adversarial learning for end-to-end Text-to-Speech (VITS)}[\cite{kim2021conditional}] es un método TTS de extremo a extremo en paralelo[\cite{chen2019learning}]. Usando un Autocodificador Variacional se conectan los dos módulos de sistemas TTS: modelo acústico y VoCoder, a través de variables latentes para permitir el aprendizaje de extremo a extremo. 
 
 El modelo VITS se describe principalmente en tres etapas: una formulación condicional de Autocodificador variacional; estimación de alineación derivada de la inferencia variacional; y entrenamiento adversarial para mejorar la calidad de la síntesis.
 
 La arquitectura general del modelo consiste en un codificador posterior, un codificador anterior, un decodificador, un discriminante, y predictor de duración estocástica. El codificador posterior y discriminante solo se usan para entrenamiento, no para inferencia.
 
-Para el codificador posterior se utilizan los bloques residuales no causales de WaveNet. Un bloque residual de WaveNet consta de capas convolucionales dilatadas con una puerta unidad de activación y salto de conexión. La proyección lineal
-capa por encima de los bloques produce la media y la varianza de
-la distribución posterior normal.
+Para el codificador posterior se utilizan los bloques residuales no causales de WaveNet. Un bloque residual de WaveNet consta de capas convolucionales dilatadas con una unidad de activación cerrada. La capa de proyección lineal situada encima de los bloques produce la media y la varianza de la distribución posterior normal.
 
 El codificador anterior consiste en un codificador de texto que procesa los fonemas de entrada, y un flujo de normalización que mejora la flexibilidad de la distribución anterior. El codificador de texto es un codificador transformador que utiliza representación posicional relativa en lugar de la codificación posicional absoluta. Mientras que el flujo de normalización es una pila de capas de acoplamiento afines [\cite{dinh2016density}] conformada por una pila de bloques residuales de WaveNet. 
 
-El decodificador es esencialmente el generador HiFi-GAN V1[\cite{kong2020hifi}]. Se compone de una pila de convoluciones transpuestas, cada una de las cuales va seguida de un módulo de fusión de campo multirreceptivo (MRF). El modelo continua la arquitectura del discriminante multiperíodo discriminador propuesto en HiFi-GAN. El discriminante multiperíodo es una mezcla de subdiscriminadores Markovianos basados en ventanas, cada uno de los cuales opera en diferentes patrones periódicos de formas de onda de entrada.
+El decodificador es en esencia el generador HiFi-GAN V1[\cite{kong2020hifi}]. El modelo continua la arquitectura del discriminante multiperíodo discriminador propuesto en HiFi-GAN. El discriminante multiperíodo es una mezcla de subdiscriminadores Markovianos basados en ventanas, cada uno de los cuales opera en diferentes patrones periódicos de formas de onda de entrada.
 
-El predictor de duración estocástica estima la distribución de la duración del fonema a partir de una entrada condicional. Para la parametrización eficiente del predictor de duración estocástica, son apilados bloques residuales con bloques dilatados y capas convolucionales separables en profundidad. También se aplican flujos de ranunas neuronales[\cite{durkan2019neural}] , que toman la forma de transformaciones no lineales invertibles mediante el uso de ranuras monótonas racionales-cuadráticas, aplicadas a capas de acoplamiento. flujos de ranunas neuronales mejoran la expresividad de la transformación con un número de parámetros en comparación con los de uso común en capas de acoplamiento. 
+El predictor de duración estocástica estima la distribución de la duración del fonema a partir de una entrada condicional. Para la parametrización eficiente del predictor de duración estocástica, son apilados bloques residuales con bloques dilatados y capas convolucionales separables en profundidad. También se aplican flujos de ranunas neuronales[\cite{durkan2019neural}], que toman la forma de transformaciones no lineales invertibles mediante el uso de ranuras monótonas racionales-cuadráticas, aplicadas a capas de acoplamiento. flujos de ranunas neuronales mejoran la expresividad de la transformación con un número de parámetros en comparación con los de uso común en capas de acoplamiento. 
 
-Una vez concluido el proceso de entrenamiento, y según la literatura al compararse este modelo de extremo a extremo con sistemas de dos etapas, a través de los modelos preentrenados Tacotron2 y Glow-TTS como modelos de primer escenario e HiFi-GAN como modelo de segundo escenario, se comprueba que VITS obtiene un habla que suena más natural y cercana a la realidad. Una evaluación humana subjetiva (puntuación de opinión media, o MOS) en LJ Speech[\cite{ljspeech}], un conjunto de datos de un solo hablante, muestra que el modelo supera a los mejores sistemas TTS disponibles públicamente y logra un MOS comparable a la realidad del terreno.
+Una vez concluido el proceso de entrenamiento, y según la literatura al compararse este modelo de extremo a extremo con sistemas de dos etapas, a través de modelos preentrenados como son: Tacotron2 y Glow-TTS como modelos de primer escenario e HiFi-GAN como modelo de segundo escenario, se comprueba que VITS obtiene un habla que suena más natural y cercana a la realidad. Una evaluación humana subjetiva (puntuación de opinión media, o MOS), muestra que el modelo entrenado sobre LJ Speech\footnote{LJ Speech es un conjunto de datos de un solo hablante}[\cite{ljspeech}], supera a los mejores sistemas TTS disponibles públicamente y logra un MOS comparable a voces reales.
 
-Ha mostrado la capacidad de ampliarse a la síntesis de voz de múltiples hablantes, generando un discurso con diversos tonos y ritmos de acuerdo a diferentes identidades de hablantes. Esto demuestra que aprende y expresa varias características del habla en un contexto de extremo a extremo.\\
+Ha mostrado la capacidad de ampliarse a la síntesis de voz de múltiples hablantes, generando un discurso con diversos tonos y ritmos de acuerdo a diferentes identidades de hablantes. Esto demuestra que aprende y expresa varias características del habla en un contexto de extremo a extremo[\cite{kim2021conditional}].\\
 
-\section{Coqui-TTS}
+\section{Plataforma Coqui-TTS}
 Existen conjuntos de sistemas TTS que abarcan la gran mayoría de los modelos explicados anteriormente, entre las más populares se encuentran \textbf{Mozilla-TTS}[\cite{mozilla-doc}] y \textbf{Coqui-TTS}[\cite{coqui-doc}]. Ambas se comportan de forma similar, se instalan con el mismo comando \texttt{pip install TTS}, y el comando para ejecutarse tiene la misma sintaxis. Coqui-TTS fue fundado por miembros del equipo de Mozilla-TTS, y es su sucesor, pues Mozilla dejó de actualizar su proyecto STT y TTS.
 
 Coqui TTS es una biblioteca para la generación avanzada de texto a voz. Se basa en las últimas investigaciones y se diseñó para lograr el mejor equilibrio entre la facilidad de entrenamiento, la velocidad y la calidad. Coqui viene con modelos preentrenados, herramientas para medir la calidad del conjunto de datos y ya se utiliza en más de 20 idiomas para productos y proyectos de investigación.

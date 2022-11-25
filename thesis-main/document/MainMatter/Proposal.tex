@@ -1,7 +1,8 @@
 \chapter{Propuesta}\label{chapter:proposal}
+En este capítulo se realiza una propuesta para atacar el problema de desarrollar un sintetizador de voz con voces cubanas. En la sección \ref{db} se comenta sobre la base de datos a contruir para el entrenamiento de modelos. Luego en las secciones \ref{taco},\ref{vits-sandra}, \ref{it-en}, \ref{angelina} se exponen los diferentes criteros a desarrollar.\\
 
 Con el objetivo de lograr una síntesis de voz satisfactoria y después de realizar un estudio de las tecnologías que se utilizan para este fin, se elige Coqui TTS como herramienta base. Coqui cuenta con una gran variedad de modelos preentrenados en más de 20 idiomas.  
-El primer paso en el desarrollo del sintetizador ess instalar la biblioteca Coqui TTS, de acuerdo a las indicaciones del repositorio oficial[\cite{coqui-doc}]. Se realizó un estudio del comportamiento de combinaciones de parejas modelo TTS y VoCoder, para evaluar cuáles ofrecían mejores resultados, y se pueden observar en la figuras \ref{en_tacotron2}, \ref{en_fastpitch}, \ref{en_glowtts}.
+El primer paso en el desarrollo del sintetizador es instalar la biblioteca Coqui TTS, de acuerdo a las indicaciones del repositorio oficial[\cite{coqui-doc}]. Se realizó un estudio del comportamiento de combinaciones de parejas modelo TTS y VoCoder, para evaluar cuáles ofrecían mejores resultados, y se pueden observar en la figuras \ref{en_tacotron2}, \ref{en_fastpitch}, \ref{en_glowtts}.
 
 Se experimenta la combinación del modelo TTS Tacotron2-DDC preentrenado en Inglés con los VoCoders WaveGrad y HiFiGan-V2 como se evidencia en la figura \ref{en_tacotron2}. Igualmente con el modelo Fast-Pitch preentrenado en inglés con el VoCoder UnivNet igualmente en  en inglés(figura \ref{en_fastpitch}), para terminar con los modelos en inglés se combina Glow-TTS y el VoCoder Multiband-MelGan(figura \ref{en_glowtts})
 Los modelos preentrenados en idioma inglés al combinarse con estos VoCoders, para un texto en español arroja distintos resultados, en algunos casos solo producen señales ruidosas mientras que los más satisfactorios, producen un discurso con una pronunciación propia de una persona de habla inglesa hablando español.
@@ -57,7 +58,7 @@ Y a partir de estos evaluar y comparar resultados.
 Para el desarrollo de cualquiera de los anteriores es imprescindible la construcción de un conjunto de datos que se adapten al modelo y a las necesidades de la investigación.
 
 
-\section{Creación de la base de datos}
+\section{Creación de la base de datos} \label{db}
 
 Para entrenar un modelo TTS, se necesita un conjunto de datos con grabaciones de voz y transcripciones, en este caso fue una base de datos en español con voces cubanas. El discurso debe dividirse en clips de audio y cada clip necesita su transcripción correspondiente. La base de datos debe poseer una organización específica, de forma tal que el cargador de datos de Coqui TTS sea capaz de cargarlos para utilizar en el entrenamiento[\cite{formatting-dataset}].    
 
@@ -87,7 +88,7 @@ El \textit{fine-tuning} consiste en aprovechar la información que se ha aprendi
 
 En la presente investigación, se utiliza el reentrenamiento, para a partir modelo previamente entrenado y realizar un nuevo entrenamiento para mejorar su rendimiento en un conjunto de datos diferente.\\
 
-\section{Fine-Tuning de Tacontron-DDC}
+\section{Fine-Tuning de Tacontron-DDC} \label{taco}
 
 Se implementa como primera variante el reentrenamiento(\textit{fine-tuning} en inglés) del modelo \textbf{Tacontron-DDC} en español, pues brinda ventajas tales como un aprendizaje más rápido, ya que un modelo preentrenado ya tiene aprendidas funcionalidades que son relevantes para la tarea de producir un discurso. Además convergerá más rápido en el nuevo \textit{dataset}, lo que reducirá el costo de entrenamiento y permitirá el proceso de experimentación más rápidamente. Y de acuerdo a la teoría se pueden obtener buenos resultados con un conjunto de datos más pequeño.\\
 
@@ -97,20 +98,20 @@ Luego de tener entrenado el modelo acústico(TTS) con una base de datos construi
 El proceso de \textit{fine-tuning} consiste en modificar la configuración original del modelo preentrenado seleccionado, es decir, especificar la base de datos a utilizar en el reentrenamiento, los detalles acústicos que reflejen las características del nuevo conjunto de datos, el nombre del nuevo modelo ajustado, la dirección donde se guardará el modelo reentrenado, entre otros aspectos. Para la mayoría de los parámetros se tomaron las características del modelo original \textbf{Tacontron-DDC} en español.
 
 
-\section{Entrenamiento de modelo VITS desde cero}
+\section{Entrenamiento de modelo VITS desde cero} \label{vits-sandra}
 
 Existen varios modelos de texto a voz de extremo a extremo que permiten el entrenamiento en una sola etapa y el muestreo en paralelo, sin embargo, generalmente la calidad de la muestra no coincide con la de los sistemas TTS de dos etapas. 
 
 Se selecciona VITS porque es un método TTS paralelo de extremo a extremo que genera un sonido de audio más natural que los modelos actuales de dos etapas. Y de acuerdo a una evaluación humana subjetiva[\cite{mos}] (puntuación de opinión media, o MOS), muestra que el modelo supera a los mejores sistemas TTS disponibles públicamente y logra un MOS comparable a la realidad.
 
-Con este enfoque se debe entrenar la red neuronal de VITS partiendo de cero. Una desventaja es que cae una gran responsabilidad sobre el conjunto de datos de entrenamiento, pues debe tener una gran riqueza del idioma y muchos clips de audio.
+Con este enfoque se debe entrenar la DNN de VITS partiendo de cero. Una desventaja es que cae una gran responsabilidad sobre el conjunto de datos de entrenamiento, pues debe tener una gran riqueza del idioma y muchos clips de audio.
 	
 	
-\section{Fine-tuning de modelos VITS preentrenados en otros idiomas}
+\section{Fine-tuning de modelos VITS preentrenados en otros idiomas} \label{it-en}
 
 Se persigue experimentar el proceso de \textit{fine-tuning} en este modelo de extremo a extremo, sin embargo no existen modelos VITS preentrenados en español disponibles. Por esto se escogen los idiomas italiano e inglés como candidatos en esta tarea.
 
-\subsection{Italiano}
+\subsection{Italiano} 
 Las culturas hispánicas tienen mucho en común con la cultura italiana, sobre todo en lo que concierne al lenguaje y la comunicación. Tanto el español como el italiano son lenguas romances, derivadas del latín, siendo justamente de las más similares, incluso más que el francés o el rumano.
 
 Es por este hecho que el italiano y el español comparten palabras muy parecidas y siguen la misma estructura gramatical. Entre ellos existe un grado de similitud léxica del 82$\%$, lo que además indica que son idiomas fáciles de aprender para sus respectivos hablantes. Sin embargo, las características que tienen en común van más allá de su origen y de la gramática.
@@ -127,3 +128,10 @@ La estructura gramatical del inglés es similar a la del español en más de un 
 Las consonantes v, ll, h, j, r, rr, z, y  la x son pronunciadas muy diferentes en español y en inglés. La consonante ñ no existe en inglés; el sonido que se conoce de esta consonante en español se escribe en ingles ny. Las combinaciones de algunas consonantes con vocales cambia totalmente el sentido de la pronunciación. Por ejemplo: la combinación de la “q” y la “u” en las palabras como queen, quiet o quick la pronunciación de  la “u” en inglés se percibe.
 
 Teniendo en cuenta la similitud, y al mismo tiempo las marcadas diferencias entre ambos idiomas, se escoge un modelo VITS preentrenado en inglés para realizar un \textit{fine-tuning} con la base de datos cubana.
+
+
+\section{Entrenamiento del modelo VITS con una base de datos fuente} \label{angelina}
+
+Hasta este punto se había depositado demasiada confianza en la base de datos conformada para la investigación. Es necesario comprobar si el modelo VITS arroja buenos resultados para el idioma español, por esto se decide realizar un entrenamiento desde cero con una base de datos en español que pertenece al grupo \textit{The M-AILABS DATASET} con un hablante mexicano. Luego de esto se procede a realizar \textit{fine-tuning}, esta vez con la base de datos de voces cubanas. 
+
+Este enfoque es el más prometedor, pues se confía en la calidad y riqueza de la base de datos fuente, para que el modelo aprende la mayoría de las peculiaridades del lenguaje, y luego en la segunda etapa solo sea una cuestión de ajuste al tono de voz del nuevo hablante cubano.
