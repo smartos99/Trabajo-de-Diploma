@@ -2,7 +2,7 @@
 
 Las redes neuronales profundas han sido las encargadas de los avances actuales en el campo TTS, por tanto esta será la línea seguida en la investigación. \\
 
-En este capítulo se realiza un análisis profundo de las que a criterio del autor son los modelos más efectivos para la conversión de texto a voz. Para lograr la transformación de texto a voz, se siguen dos enfoques distintos. El primero es un sistema de dos etapas: una combinación de dos redes neuronales profundas, una para convertir de texto a espectograma a escala de mel\footnote{La Escala Mel, propuesta por Stevens, Volkman y Newmann en 1937, es una escala musical perceptual del tono a juicio de observadores equiespaciados.} y luego otra que transforma el espectograma en onda sonora, en la sección \ref{two-stages} se exponen varios de los modelos correspondientes a cada etapa. El segundo criterio es un modelo de extremo a extremo que se explica en la sección \ref{end-to-end}
+En este capítulo se realiza un análisis profundo de las que a criterio del autor son los modelos más efectivos para la conversión de texto a voz. Para lograr la transformación de texto a voz, se siguen dos enfoques distintos. El primero es un sistema de dos etapas: una combinación de dos redes neuronales profundas, una para convertir de texto a espectograma de mel \footnote{Un espectrograma de mel es un espectrograma en el que las frecuencias se convierten a la escala de mel. La escala de Mel propuesta en 1937 por Stevens, Volkmann y Newmann, es una unidad de tono tal que distancias iguales en el tono suenan igualmente distantes para el oyente.} y luego otra que transforma el espectograma en onda sonora, en la sección \ref{two-stages} se exponen varios de los modelos correspondientes a cada etapa. El segundo criterio es un modelo de extremo a extremo que se explica en la sección \ref{end-to-end}
 
 \section{Sistemas de dos etapas} \label{two-stages}
 
@@ -23,9 +23,9 @@ Tacotron se basa en cuadros, o \textit{frames}, por lo que la inferencia es sust
 
 \subsubsection{Tacotron 2}
 
-Tacotron 2[\cite{shen2018natural}] es similar al anteriormente mencionado Tacotron; es una red recurrente de predicción de características, de tipo secuencia a secuencia con atención, que mapea incrustaciones(del inglés, \textit{embeddings}) de caracteres en espectrogramas a escala de mel. 
+Tacotron 2[\cite{shen2018natural}] es similar al anteriormente mencionado Tacotron; es una red recurrente de predicción de características, de tipo secuencia a secuencia con atención, que mapea incrustaciones(del inglés, \textit{embeddings}) de caracteres en espectrogramas de mel. 
 
-Un espectrograma de frecuencia de mel está relacionado con el espectograma de frecuencia lineal, es decir, la magnitud de la transformada de Fourier de tiempo corto (STFT, por sus siglas del inglés \textit{short-time Fourier transform}). Se obtiene aplicando una transformada no lineal al eje de frecuencia de la STFT, inspirado en respuestas calificadas por el sistema auditivo humano, y resume el contenido de frecuencia con menos dimensiones.
+Un espectrograma de mel está relacionado con el espectograma de frecuencia lineal, es decir, la magnitud de la transformada de Fourier de tiempo corto (STFT, por sus siglas del inglés \textit{short-time Fourier transform}). Se obtiene aplicando una transformada no lineal al eje de frecuencia de la STFT, inspirado en respuestas calificadas por el sistema auditivo humano, y resume el contenido de frecuencia con menos dimensiones.
 
 El uso de una escala de frecuencia auditiva de este tipo tiene el efecto de enfatizar detalles en frecuencias más bajas, que son fundamentales para la inteligibilidad del habla, al mismo tiempo que se resta importancia a los detalles de alta frecuencia, que están dominados por ráfagas de ruido y generalmente no necesitan ser modelados con alta fidelidad. Debido a estas propiedades, las características derivadas de la escala de mel se han utilizado como representación base para el reconocimiento de voz durante muchas décadas. 
 
@@ -77,7 +77,7 @@ Posee un regulador de longitud que se utiliza para resolver el problema de la di
 El entrenamiento de FastSpeech y de  gran mayoría de los modelos TTS se realiza sobre un conjunto de datos que contiene clips de audios con sus correspondientes transcripciones de texto. Específicamente para FastSpeech, se divide al azar el conjunto de datos en 3 conjuntos: muestras para entrenamiento, muestras para validación y muestras para las pruebas. \\
 
 
-El modelo FastSpeech puede casi coincidir con el modelo autoregresivo Transformer TTS en términos de calidad de voz, acelera la generación de espectrograma mel por 270x y la síntesis de voz de extremo a extremo por 38x, casi se elimina el problema de saltar y repetir palabras, y puede ajustar la velocidad de voz (0.5x-1.5x) sin problemas[\cite{ren2019fastspeech}].
+El modelo FastSpeech puede casi coincidir con el modelo autoregresivo Transformer TTS en términos de calidad de voz, acelera la generación de espectrograma de mel por 270x y la síntesis de voz de extremo a extremo por 38x, casi se elimina el problema de saltar y repetir palabras, y puede ajustar la velocidad de voz (0.5x-1.5x) sin problemas[\cite{ren2019fastspeech}].
 
 
 \subsubsection{FastPitch}
@@ -97,7 +97,7 @@ A pesar de la ventaja, los modelos TTS paralelos no se pueden entrenar sin la gu
 Glow-TTS[\cite{kim2020glow}][\cite{glowtts}] es un modelo generativo basado en flujo para TTS paralelo que no requiere de ningún alineador externo. Al combinar las propiedades de los flujos y la programación dinámica, el el modelo busca la alineación monótona más probable entre el texto y la representación latente del habla en sí misma.
 La arquitectura del modelo consiste en un codificador que sigue la estructura del codificador de \textit{Transformer TTS} con pequeñas modificaciones, un predictor de duración, que tiene una estructura y configuración como la de FastSpeech, y finalmente un decodificador basado en flujo, que es la parte fundamental del modelo.
 
-Se demostró que hacer cumplir alineaciones monótonas fuerte permite un texto a voz robusto, que se generaliza a largas pronunciaciones, y el empleo de flujos generativos permite síntesis de voz rápida, diversa y controlable. Glow-TTS puede generar espectrogramas mel 15,7 veces más rápido que el modelo TTS autorregresivo,
+Se demostró que hacer cumplir alineaciones monótonas fuerte permite un texto a voz robusto, que se generaliza a largas pronunciaciones, y el empleo de flujos generativos permite síntesis de voz rápida, diversa y controlable. Glow-TTS puede generar espectrogramas de mel 15,7 veces más rápido que el modelo TTS autorregresivo,
 Tacotron 2, mientras obtiene un rendimiento con calidad de voz comparable. Según la literatura, el modelo se puede extender fácilmente a una configuración de múltiples hablantes.
 
 

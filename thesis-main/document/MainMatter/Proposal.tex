@@ -1,8 +1,10 @@
 \chapter{Propuesta}\label{chapter:proposal}
 En este capítulo se realiza una propuesta para atacar el problema de desarrollar un sintetizador de voz con voces cubanas. En la sección \ref{db} se comenta sobre la base de datos a contruir para el entrenamiento de modelos. Luego en las secciones \ref{taco},\ref{vits-sandra}, \ref{it-en}, \ref{angelina} se exponen los diferentes criteros a desarrollar.\\
 
-Con el objetivo de lograr una síntesis de voz satisfactoria y después de realizar un estudio de las tecnologías que se utilizan para este fin, se elige Coqui TTS como herramienta base. Coqui cuenta con una gran variedad de modelos preentrenados en más de 20 idiomas.  
-El primer paso en el desarrollo del sintetizador es instalar la biblioteca Coqui TTS, de acuerdo a las indicaciones del repositorio oficial[\cite{coqui-doc}]. Se realizó un estudio del comportamiento de combinaciones de parejas modelo TTS y VoCoder, para evaluar cuáles ofrecían mejores resultados, y se pueden observar en la figuras \ref{en_tacotron2}, \ref{en_fastpitch}, \ref{en_glowtts}.
+Con el objetivo de lograr una síntesis de voz satisfactoria y después de realizar un estudio de las tecnologías que se utilizan para este fin, se elige Coqui TTS como plataforma para el entrenamiento de los nuevos modelos DNN. Coqui cuenta con una gran variedad de modelos preentrenados en más de 20 idiomas.  
+El primer paso en el desarrollo del sintetizador es instalar la biblioteca Coqui TTS, de acuerdo a las indicaciones del repositorio oficial[\cite{coqui-doc}].
+
+ Se realizó un estudio del comportamiento de parejas modelo TTS - VoCoder, para evaluar cuáles pares ofrecían mejores resultados. Es decir se tomó un modelo de la primera etapa en un sistema de dos etapas, como Tacotron2 que convierte texto en espectograma de mel, y empareja con un VoCoder como HiFiGan para a partir del espectograma obtener una salida de audio. Las combinaciones se pueden observar en la figuras \ref{en_tacotron2}, \ref{en_fastpitch}, \ref{en_glowtts}.
 
 Se experimenta la combinación del modelo TTS Tacotron2-DDC preentrenado en Inglés con los VoCoders WaveGrad y HiFiGan-V2 como se evidencia en la figura \ref{en_tacotron2}. Igualmente con el modelo Fast-Pitch preentrenado en inglés con el VoCoder UnivNet igualmente en  en inglés(figura \ref{en_fastpitch}), para terminar con los modelos en inglés se combina Glow-TTS y el VoCoder Multiband-MelGan(figura \ref{en_glowtts})
 Los modelos preentrenados en idioma inglés al combinarse con estos VoCoders, para un texto en español arroja distintos resultados, en algunos casos solo producen señales ruidosas mientras que los más satisfactorios, producen un discurso con una pronunciación propia de una persona de habla inglesa hablando español.
@@ -28,7 +30,7 @@ Los modelos preentrenados en idioma inglés al combinarse con estos VoCoders, pa
 \end{figure}
 
 
-Por otro lado Coqui solo cuenta con un modelo preentrenado en español, el \textbf{Tacontron-DDC}, que está entrenado sobre la base de datos de M-AILABS[\cite{mailabs}]; este modelo fue probado junto a los VoCoders preentrenados como se muestra en la figura \ref{es_tacotron}. Los mejores resultados fueron arrojados por las combinaciones de \textbf{Tacontron-DDC} con los modelos: Univnet entrenado sobre la base de datos Ljspeech en inglés, y Wavegrad entrenado sobre el conjunto de datos LibriTTS, aunque ambos presentan problemáticas como la mala pronunciación de la letra ñ.
+Por otro, lado Coqui solo cuenta con un modelo preentrenado en español, el \textbf{Tacontron-DDC}, que está entrenado sobre la base de datos de M-AILABS[\cite{mailabs}]; este modelo fue probado junto a los VoCoders preentrenados como se muestra en la figura \ref{es_tacotron}. Los mejores resultados fueron arrojados por las combinaciones de \textbf{Tacontron-DDC} con los modelos: Univnet entrenado sobre la base de datos LJSpeech[\cite{ljspeech}] en inglés, y Wavegrad entrenado sobre el conjunto de datos LibriTTS[\cite{libritts}][\cite{libritts1}], aunque ambos presentan problemáticas como la mala pronunciación de la letra ñ.
 
 \begin{figure}[H]
 	\centering
@@ -67,7 +69,7 @@ Los clips de audio del conjunto de datos deben poseer formato WAV. El formato WA
 
 
 \subsubsection{Idioma Español}
-La base de datos conformanda debe tener una buena cobertura del idioma en el que se desea entrenar el modelo. Debe cubrir la variedad fonémica, los sonidos excepcionales y los signos especiales.
+La base de datos que se conforma debe tener una buena cobertura del idioma en el que se desea entrenar el modelo. Debe cubrir la variedad fonética, los sonidos excepcionales y los signos especiales.
 
 El idioma español[\cite{ecured}] o castellano. Es una lengua romance del grupo ibérico, y tras el chino mandarín, es la lengua más hablada del mundo por el número de personas que la tienen como lengua materna. El idioma es un rasgo esencial de la nacionalidad. Por eso unos de los rasgos que define a los cubanos, es precisamente este: la comunicación mediante el idioma español. 
 
@@ -78,6 +80,55 @@ La estructura silábica más frecuente del español es consonante más vocal, de
 En español hay cinco vocales fonológicas: /a/, /e/, /i/, /o/ y /u/. La /e/ y /o/ son vocales medias, ni cerradas ni abiertas, pero pueden tender a cerrarse y abrirse. Sin embargo, estos sonidos no suponen un rasgo distintivo en español general. Según la mayoría de los autores, se distinguen por lo general 24 fonemas en el español, cinco de los cuales corresponden a vocales y 19 a consonantes, además de otros fonemas dialectales y/o alofónicos\footnote{alófono: Sonido propio de la pronunciación de un fonema, que puede variar según su posición en la palabra o en la sílaba y en relación con los sonidos vecinos, aunque sigue considerándose el mismo fonema.}, aunque la mayoría de los dialectos sólo cuentan con 17 consonantes, y algunos otros con 18.
 
 El español se escribe mediante una variante del alfabeto latino con la letra adicional ``ñ'' y los dígrafos\footnote{dígrafo: Signo ortográfico compuesto de dos letras y que representa un solo sonido.} ``ch'' y ``ll'', consideradas letras del abecedario desde 1803, debido a que representan un solo sonido, distinto de las letras que lo componen. Así, el alfabeto español queda formado por 27 letras y 2 dígrafos: a, b, c, ch, d, e, f, g, h, i, j, k, l, ll , m, n, ñ, o, p, q, r, s, t, u, v, w, x, y, z. Además el español emplea signos gráficos de interrogación y exclamación como ``¿'' y ``¡'', que no poseen otras lenguas. Estos signos especiales facilitan la lectura de interrogaciones y exclamaciones largas que oralmente solo se expresan por variaciones de entonación. 
+
+\subsubsection{¿Qué hace a una buena base de datos?}
+
+\begin{itemize}
+	\item Debe cubrir una cantidad considerable de clips cortos y largos.
+	\item Libre de errores. Se debe eliminar cualquier archivo incorrecto o corrupto. 
+	\item Para escuchar una voz con la mayor naturalidad posible, usar las diferencias de frecuencia y tono, y signos de puntuación.
+	\item Es necesario que el conjunto cubra una buena parte de fonemas, difonemas y, en algunos idiomas, trifonemas. Si la cobertura de fonemas es baja, el modelo puede tener dificultades para pronunciar nuevas palabras difíciles.
+	\item Las muestras de la base de datos deben estar lo más limpio posible, es decir, se debe limpiar de ruido y cortar los espacios de tiempo entre expresiones,donde no se hable.
+	
+\end{itemize}
+
+\subsubsection{Cuban Voice Dataset}
+Como resultado de la investigación es obtenida una base de voces recopilada por el autor de esta investigación, de un hablante cubano. Las grabaciones de audio se recolectaron usando la grabadora de voz de un dispositivo celular. Las sentencias grabadas consisten el fragmentos de tres libros diferentes, ``El Lobo Estepario'',  ``El Principito'', y  ``El Alquimista'', así como otras frases populares, números, y fechas.\\ 
+
+La base de datos está conformada por 160 clips de audio con sus respectivas transcripciones recogidas en el archivo metadata.csv. Cada clip tiene una duración de 2 a 15 segundos.\\
+
+Los clips de audio poseen formato .wav y se organizan dentro de una carpeta de nombre wavs de la siguiente forma:
+
+\begin{center}
+	/wavs\\
+	| - audio1.wav\\
+	| - audio1.wav\\
+	| - audio2.wav\\
+	| - audio3.wav\\
+	...
+\end{center}
+
+Las transcripciones se recogen dentro del archivo metadata.csv. Donde audio1, audio2, etc se refieren a los archivos audio1.wav, audio2.wav etc.
+
+\begin{center}
+	audio1|Esta es mi transcripción 1.
+	
+	audio2|Esta es mi transcripción 2.
+	
+	audio3|Esta es mi transcripción 3.
+	
+	audio4|Esta es mi transcripción 4.
+\end{center}
+
+Se adoptará en la conformación de la base de datos con voces cubanas, la misma estructura de la base de datos en Español de \textit{The M-AiLabs Speech Dataset}, pues algunos de los modelos que se utilizaron fueron preentrenados sobre estos conjuntos de datos. Finalmente queda la siguiente organización:
+
+\begin{flushleft}
+	/[Nombre del conjunto]/by$\_$book/female/[creador]/[nombre del hablante]
+	
+	|/wavs
+	
+	|metadata.csv
+\end{flushleft}
 
 \subsection*{Fine-Tuning}
 Entrenar correctamente un modelo de aprendizaje profundo requiere generalmente de una gran base de datos y de un extenso entrenamiento.
@@ -90,9 +141,9 @@ En la presente investigación, se utiliza el reentrenamiento, para a partir mode
 
 \section{Fine-Tuning de Tacontron-DDC} \label{taco}
 
-Se implementa como primera variante el reentrenamiento(\textit{fine-tuning} en inglés) del modelo \textbf{Tacontron-DDC} en español, pues brinda ventajas tales como un aprendizaje más rápido, ya que un modelo preentrenado ya tiene aprendidas funcionalidades que son relevantes para la tarea de producir un discurso. Además convergerá más rápido en el nuevo \textit{dataset}, lo que reducirá el costo de entrenamiento y permitirá el proceso de experimentación más rápidamente. Y de acuerdo a la teoría se pueden obtener buenos resultados con un conjunto de datos más pequeño.\\
+Se implementa como primera variante el reentrenamiento(\textit{fine-tuning} en inglés) del modelo \textbf{Tacontron-DDC} en español, pues brinda ventajas tales como un aprendizaje más rápido, ya que un modelo preentrenado ya tiene aprendidas funcionalidades que son relevantes para la tarea de producir un discurso. Además convergerá más rápido en el nuevo conjunto, lo que reducirá el costo de entrenamiento y permitirá el proceso de experimentación más rápidamente. Y de acuerdo a la teoría se pueden obtener buenos resultados con un conjunto de datos más pequeño.\\
 
-Luego de tener entrenado el modelo acústico(TTS) con una base de datos construida con voces cubanas, es posible que alguno de los VoCoders preentrenados disponibles produzca una salida con las características deseadas, en caso contrario se debería entrenar el VoCoder con los datos del \textit{dataset} construido.
+Luego de tener entrenado el modelo acústico(TTS) con una base de datos construida con voces cubanas, es posible que alguno de los VoCoders preentrenados disponibles produzca una salida con las características deseadas, en caso contrario se debería entrenar el VoCoder con los datos de la base de datos resultado de la investigación.
 
 
 El proceso de \textit{fine-tuning} consiste en modificar la configuración original del modelo preentrenado seleccionado, es decir, especificar la base de datos a utilizar en el reentrenamiento, los detalles acústicos que reflejen las características del nuevo conjunto de datos, el nombre del nuevo modelo ajustado, la dirección donde se guardará el modelo reentrenado, entre otros aspectos. Para la mayoría de los parámetros se tomaron las características del modelo original \textbf{Tacontron-DDC} en español.
