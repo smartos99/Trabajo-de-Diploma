@@ -4,10 +4,10 @@ En este capítulo se realiza una propuesta para atacar el problema de desarrolla
 Con el objetivo de lograr una síntesis de voz satisfactoria y después de realizar un estudio de las tecnologías que se utilizan para este fin, se elige Coqui TTS como plataforma para el entrenamiento de los nuevos modelos DNN. Coqui cuenta con una gran variedad de modelos preentrenados en más de 20 idiomas.  
 El primer paso en el desarrollo del sintetizador es instalar la biblioteca Coqui TTS, de acuerdo a las indicaciones del repositorio oficial[\cite{coqui-doc}].
 
- Se realizó un estudio del comportamiento de parejas modelo TTS - VoCoder, para evaluar cuáles pares ofrecían mejores resultados. Es decir se tomó un modelo de la primera etapa en un sistema de dos etapas, como Tacotron2 que convierte texto en espectograma de mel, y empareja con un VoCoder como HiFiGan para a partir del espectograma obtener una salida de audio. Las combinaciones se pueden observar en la figuras \ref{en_tacotron2}, \ref{en_fastpitch}, \ref{en_glowtts}.
+ Se realizó un estudio del comportamiento de parejas modelo TTS - VoCoder, para evaluar cuáles pares ofrecían mejores resultados. Es decir se tomó un modelo de la primera etapa en un sistema de dos etapas, como Tacotron2 que convierte texto en espectograma de mel, y se empareja con un VoCoder como HiFiGan para a partir del espectograma obtener una salida de audio. Las combinaciones se pueden observar en la figuras \ref{en_tacotron2}, \ref{en_fastpitch}, \ref{en_glowtts}.
 
-Se experimenta la combinación del modelo TTS Tacotron2-DDC preentrenado en Inglés con los VoCoders WaveGrad y HiFiGan-V2 como se evidencia en la figura \ref{en_tacotron2}. Igualmente con el modelo Fast-Pitch preentrenado en inglés con el VoCoder UnivNet igualmente en  en inglés(figura \ref{en_fastpitch}), para terminar con los modelos en inglés se combina Glow-TTS y el VoCoder Multiband-MelGan(figura \ref{en_glowtts})
-Los modelos preentrenados en idioma inglés al combinarse con estos VoCoders, para un texto en español arroja distintos resultados, en algunos casos solo producen señales ruidosas mientras que los más satisfactorios, producen un discurso con una pronunciación propia de una persona de habla inglesa hablando español.
+Se experimenta la combinación del modelo TTS Tacotron2-DDC preentrenado en Inglés con los VoCoders WaveGrad y HiFiGan-V2 como se evidencia en la figura \ref{en_tacotron2}. Igualmente con el modelo Fast-Pitch preentrenado en inglés con el VoCoder UnivNet igualmente en inglés(figura \ref{en_fastpitch}), para terminar con los modelos en inglés se combina Glow-TTS y el VoCoder Multiband-MelGan(figura \ref{en_glowtts}).
+Los modelos preentrenados en idioma inglés al combinarse con estos VoCoders, para un texto en español arrojan distintos resultados, en algunos casos solo producen señales ruidosas mientras que los más satisfactorios, producen un discurso con una pronunciación propia de una persona de habla inglesa hablando español.
 
 \begin{figure}[H]
 	\centering
@@ -30,7 +30,7 @@ Los modelos preentrenados en idioma inglés al combinarse con estos VoCoders, pa
 \end{figure}
 
 
-Por otro, lado Coqui solo cuenta con un modelo preentrenado en español, el \textbf{Tacontron-DDC}, que está entrenado sobre la base de datos de M-AILABS[\cite{mailabs}]; este modelo fue probado junto a los VoCoders preentrenados como se muestra en la figura \ref{es_tacotron}. Los mejores resultados fueron arrojados por las combinaciones de \textbf{Tacontron-DDC} con los modelos: Univnet entrenado sobre la base de datos LJSpeech[\cite{ljspeech}] en inglés, y Wavegrad entrenado sobre el conjunto de datos LibriTTS[\cite{libritts}][\cite{libritts1}], aunque ambos presentan problemáticas como la mala pronunciación de la letra ñ.
+Por otro, lado Coqui solo cuenta con un modelo preentrenado en español, el \textbf{Tacontron-DDC}, que está entrenado sobre la base de datos de M-AILABS[\cite{mailabs}]; este modelo fue probado junto a VoCoders preentrenados como se muestra en la figura \ref{es_tacotron}. Los mejores resultados fueron arrojados por las combinaciones de \textbf{Tacontron-DDC} con los modelos: Univnet entrenado sobre la base de datos LJSpeech[\cite{ljspeech}] en inglés, y Wavegrad entrenado sobre el conjunto de datos LibriTTS[\cite{libritts}][\cite{libritts1}], aunque ambos presentan problemáticas como la mala pronunciación de la letra ñ.
 
 \begin{figure}[H]
 	\centering
@@ -40,16 +40,16 @@ Por otro, lado Coqui solo cuenta con un modelo preentrenado en español, el \tex
 \end{figure}
 
 
-De acuerdo con la documentación de Coqui, el objetivo de la investigación que consiste en desarrollar un sintetizador de voz en español con voz cubana, y experimentos iniciales realizados se proponen tres enfoques:
+De acuerdo con la documentación de Coqui, el objetivo de la investigación que consiste en desarrollar un sintetizador de voz en español con voz cubana, y experimentos iniciales realizados se proponen cuatro enfoques:
 
 \begin{enumerate}
 	\item Realizar un \textit{fine-tuning} o reentrenamiento, utilizando una base de datos con voces cubanas, al modelo preentrenado de Coqui[\cite{coqui-doc}], \textbf{Tacontron-DDC}, que es el único disponible en español. 
 	
 	\item Realizar el entrenamiendo desde cero de un modelo, en este caso se podría entrenar cualquier modelo disponible. \textbf{VITS} es un buen candidato pues en general produce resultados bastante satisfactorios.
 	
-	\item Realizar un \textit{fine-tuning} a modelos VITS preentrenados en idiomas distintos al español.
+	\item Realizar un \textit{fine-tuning} a modelos \textbf{VITS} preentrenados en idiomas distintos al español.
 	
-	\item Realizar un preentrenamiento desde cero al modelo VITS utilizando una base de datos fuente, para luego realizar un proceso de \textit{fine-tuning} sobre este, pero utilizando la base de datos de voces cubanas contruida.
+	\item Realizar un preentrenamiento desde cero al modelo \textbf{VITS} utilizando una base de datos fuente en español, para luego realizar un proceso de \textit{fine-tuning} sobre este, pero utilizando la base de datos contruida con voces cubanas.
 	
 	
 	
@@ -81,6 +81,8 @@ En español hay cinco vocales fonológicas: /a/, /e/, /i/, /o/ y /u/. La /e/ y /
 
 El español se escribe mediante una variante del alfabeto latino con la letra adicional ``ñ'' y los dígrafos\footnote{dígrafo: Signo ortográfico compuesto de dos letras y que representa un solo sonido.} ``ch'' y ``ll'', consideradas letras del abecedario desde 1803, debido a que representan un solo sonido, distinto de las letras que lo componen. Así, el alfabeto español queda formado por 27 letras y 2 dígrafos: a, b, c, ch, d, e, f, g, h, i, j, k, l, ll , m, n, ñ, o, p, q, r, s, t, u, v, w, x, y, z. Además el español emplea signos gráficos de interrogación y exclamación como ``¿'' y ``¡'', que no poseen otras lenguas. Estos signos especiales facilitan la lectura de interrogaciones y exclamaciones largas que oralmente solo se expresan por variaciones de entonación. 
 
+Todos estos aspectos deben tenerse en cuenta para la conformación de una base de datos en español.
+
 \subsubsection{¿Qué hace a una buena base de datos?}
 
 \begin{itemize}
@@ -88,12 +90,12 @@ El español se escribe mediante una variante del alfabeto latino con la letra ad
 	\item Libre de errores. Se debe eliminar cualquier archivo incorrecto o corrupto. 
 	\item Para escuchar una voz con la mayor naturalidad posible, usar las diferencias de frecuencia y tono, y signos de puntuación.
 	\item Es necesario que el conjunto cubra una buena parte de fonemas, difonemas y, en algunos idiomas, trifonemas. Si la cobertura de fonemas es baja, el modelo puede tener dificultades para pronunciar nuevas palabras difíciles.
-	\item Las muestras de la base de datos deben estar lo más limpio posible, es decir, se debe limpiar de ruido y cortar los espacios de tiempo entre expresiones,donde no se hable.
+	\item Las muestras de la base de datos deben estar lo más limpio posible, es decir, se debe limpiar de ruido y cortar los espacios de tiempo entre expresiones, donde no se hable.
 	
 \end{itemize}
 
 \subsubsection{Cuban Voice Dataset}
-Como resultado de la investigación es obtenida una base de voces recopilada por el autor de esta investigación, de un hablante cubano. Las grabaciones de audio se recolectaron usando la grabadora de voz de un dispositivo celular. Las sentencias grabadas consisten el fragmentos de tres libros diferentes, ``El Lobo Estepario'',  ``El Principito'', y  ``El Alquimista'', así como otras frases populares, números, y fechas.\\ 
+Como resultado de la investigación es obtenida una base de voces recopilada por el autor de esta tesis, de un hablante cubano. Las grabaciones de audio se recolectaron usando la grabadora de voz de un dispositivo celular. Las sentencias grabadas consisten el fragmentos de tres libros diferentes, ``El Lobo Estepario'',  ``El Principito'', y  ``El Alquimista'', así como otras frases populares, números, y fechas.\\ 
 
 La base de datos está conformada por 160 clips de audio con sus respectivas transcripciones recogidas en el archivo metadata.csv. Cada clip tiene una duración de 2 a 15 segundos.\\
 

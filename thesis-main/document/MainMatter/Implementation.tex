@@ -37,13 +37,15 @@ Se utilizaron para la evaluación un total de 6 clips de audio obtenidos de un h
 	\item Pido perdón a los niños por haber dedicado este libro a una persona mayor. Tengo una muy seria disculpa: esta persona mayor es el mejor amigo que tengo en el mundo. \label{sentence6}
 \end{enumerate}
 
-Se seleccionan estas señales por presentar rasgos característicos del idioma español y que se deben evaluar para arribar a una opinión acerca de si el discurso producido por un modelo en cuestión cumple con el objetivo de la investigación, principalmente en la pronunciación de tildes, y palabras con ñ, además de signos de puntuación.  
+Se seleccionan estas señales por presentar rasgos característicos del idioma español y que se deben evaluar para arribar a una opinión acerca de si el discurso producido por un modelo en cuestión cumple con el objetivo de la investigación, principalmente en la pronunciación de tildes, y palabras con ñ, además de signos de puntuación. 
+
+La evaluación será conducida por un grupo de expertos del grupo CENATAV, que brindarán una puntuación de 1 a 5 para cada frase de muestra. Finalmente el promedio de estas puntuaciones será reflejado como resultado para cada modelo.  
 
 
 
 \subsection{Procesamiento de audio}
 
-\textbf{RNNoise} es una biblioteca basada en una red neuronal para la eliminación de ruido en grabaciones, se utliza en este proyecto para obtener clips de audio libres de ruidos y con la frecuencia de muestreo deseada.
+\textbf{RNNoise} es una biblioteca basada en una red neuronal para la eliminación de ruido en grabaciones, se utiliza en este proyecto para obtener clips de audio libres de ruidos y con la frecuencia de muestreo deseada.
 
 Se realizó un procesamiento para la eliminación de ruido en el audio de la base de voces original, y se estableció una frecuencia de muestreo de acuerdo a las necesidades de cada experimento. 
 
@@ -58,7 +60,7 @@ Google Drive[\cite{drive}] es un espacio de almacenamiento que permite a los usu
 \textbf{Espeak}[\cite{espeak}] es un \textit{software} de texto a voz que admite muchos idiomas y  es compatible con la salida IPA por sus siglas en inglés (\textit{International Phonetic Alphabet}(alfabeto fonético internacional).
 El phonemizer permite la fonemización simple de palabras y textos en muchos lenguajes.
 
-\section{Modificación en el código fuente de Coqui TTS}
+\section{Modificación en el código fuente de Coqui TTS} \label{mailabs}
 El código fuente del repositorio ocasionaba problemas al conformar ruta del archivo metadata.csv, por lo que se realizó un pequeño cambio en el método \texttt{mailabs} del archivo \texttt{formatter.py}, quedando como se muestra en el siguiente código.
 
 
@@ -122,13 +124,13 @@ return items
 \end{lstlisting}
 
 \section{Fine-Tuning de Tacontron-DDC} \label{tacotron2}
-Como ya se mencionó en el capítulo anterior, el \textit{fine-tuning} resulta una idea prometedora, pues en teoría salva tiempo y recursos.
+Como ya se mencionó en el capítulo \ref{chapter:proposal}, el \textit{fine-tuning} resulta una idea prometedora, pues en teoría salva tiempo y recursos.
 
 Para el proceso de ajuste de Tacotron2 a la base de datos personalizada, se utilizó la configuración del modelo preentrenado en español sobre el conjunto de datos de M-AILABS. 
 
-La frecuencia de muestreo(\textit{sample rate}) que se establece en la configuración es 16000Hz, pues el conjunto de datos de M-AILABS sobre el que se preentrenó el modelo seleccionado, se encuentra en esta misma frecuencia. Finalmente se debe utilizar un cargador de datos(\textit{formatter}) compatible con la base de datos usada, en este caso se selecciona la variante \texttt{mailabs}, que se puede apreciar en la sección anterior.
+La frecuencia de muestreo(\textit{sample rate}) que se establece en la configuración es 16000Hz, pues el conjunto de datos de M-AILABS sobre el que se preentrenó el modelo seleccionado, se encuentra en esta misma frecuencia. Finalmente se debe utilizar un cargador de datos(\textit{formatter}) compatible con la base de datos usada, en este caso se selecciona la variante \texttt{mailabs}, que se puede apreciar en la sección \ref{mailabs}.
 
-El próximo paso es descargar el modelo Tacotron2, para luego comenzar el reentrenamiento.
+El próximo paso es descargar el modelo Tacotron2, para luego comenzar el reentrenamiento.\\
 
 \texttt{tts - -model$\_$name tts$\_$models$/$es$/$mai$/$tacotron2-DDC - -text "Hola."}\\
 
@@ -139,15 +141,15 @@ El reentrenamiento se llevó a cabo utilizando el GPU Premium de Google Colab, y
 
 Los resultados son extremadamente lastimosos, el modelo entrenado por unas 160 \textit{epochs} produce una señal ruidosa, sin embargo en algún momento se puede distinguir alguna que otra sílaba. A partir de las 210 \textit{epochs} la salida del audio producida para una oración pequeña, es una señal corrupta donde no se distingue nada, este comportamiento se mantienen invariante hasta la \textit{epoch} 580. Se tenía previsto alcanzar las 2000 \textit{epochs}, pero debido a que el reentrenamiento consumía demasiados recursos y visto que los resultados no eran los deseados, no se continuó. 
 
-Claramente el modelo Tacotron2 no se adapta a las necesidades de la investigación, ni a las características de la base de voces conformada, y no cumplió las expectativas de ser un reentrenamiento veloz e iba a converger rápidamente en el nuevo conjunto por estar preentrenado en español. Y es por esto que se decide cambiar a otra DNN.
+Claramente el modelo Tacotron2 no se adapta a las necesidades de la investigación, ni a las características de la base de voces conformada, y no cumplió las expectativas de ser un reentrenamiento veloz que iba a converger rápidamente en el nuevo conjunto por estar preentrenado en español. Y es por esto que se decide cambiar a otra DNN.
 
 
 \section{Entrenamiento de modelo VITS desde cero} \label{vits_s}
 Como los resultados de Tacotron2 no fueron los mejores, se optó por realizar experimentos con otros modelos, se eligió VITS por ser de los que mejores resultados arroja por encima de Tacotron2 y Glow-TTS[\cite{kim2021conditional}].
 
-Esta vez se entrena el modelo desde cero utilizando el conjunto de datos con voces cubanas, y la receta[\cite{train-vits}] que provee Coqui[\cite{coqui-doc}] para entrenar VITS. Para este entrenamiento, siguiendo ejemplos de entrenamientos anteriores, se cambia la frecuencia de muestreo de las grabaciones a 22050. Por otro lado el \textit{formatter} utilizado es la variante \texttt{mailabs}, que se encuentra en \texttt{formatters.py}
+Esta vez se entrena el modelo desde cero utilizando el conjunto de datos con voces cubanas, y la receta[\cite{train-vits}] que provee Coqui[\cite{coqui-doc}] para entrenar VITS. Para este entrenamiento, siguiendo ejemplos de entrenamientos anteriores, se cambia la frecuencia de muestreo de las grabaciones a 22050Hz. Por otro lado el \textit{formatter} utilizado es la variante \texttt{mailabs}, que se encuentra en \texttt{formatters.py}
 
-El entrenamiento se produjo utilizando el GPU Premium de Google Colab, y CUDA[\cite{cuda}][\cite{cuda1}]. Requirió mucha memoria RAM, siendo 25GB una cantidad insuficiente, se comprobó que con un procesador de 83GB de RAM, sí podía realizarse. Transcurrión completa e ininterrumpidamente por 2000 \textit{epochs}, resultando en que el último mejor modelo se generó en la \textit{epoch} número 967. El entrenamiento no representó un gran costo, en tiempo y en \textit{computer units}, demorando alrededor de 7 horas y consumiendo alrededor de 200CU.
+El entrenamiento se produjo utilizando el GPU Premium de Google Colab, y CUDA[\cite{cuda}][\cite{cuda1}]. Requirió mucha memoria RAM, siendo 25GB una cantidad insuficiente, se comprobó que con un procesador de 83GB de RAM, sí podía realizarse. Transcurrió completa e ininterrumpidamente por 2000 \textit{epochs}, resultando en que el último mejor modelo se generó en la \textit{epoch} número 967. El entrenamiento no representó un gran costo, en tiempo y en \textit{computer units}, demorando alrededor de 7 horas y consumiendo alrededor de 200CU.
 
 Se obtiene un modelo que permite la emisión de sonidos comprensibles, aunque no completamente inteligibles, pues produce un discurso robótico y tiene dificultad en la combinación de difonos, por lo que hay frases y palabras indescifrables para el oyente.
 
@@ -200,7 +202,7 @@ Por último se realiza el proceso de evaluación descrito en la sección \ref{ev
 	\end{tabular} 
 \end{center}
 
-Se evidencia una mejora en los resultados, con respecto al modelo anterior. Esto es debido a que el modelo ya tenía aprendido características del idioma italiano, que es uno de los más similares al español.
+Se evidencia una mejora en los resultados, con respecto al modelo anterior. Esto es debido a que el modelo ya tenía aprendidas características del idioma italiano, que es uno de los más similares al español.
 
 
 \subsection{Modelo preentrenado en Inglés} 
@@ -232,11 +234,13 @@ Los resultados son ligeramente peores que con el \textit{fine-tuning} del modelo
 \section{Entrenamiento con M-AILABS DATASET} \label{vits_angel}
 Se comienza a sospechar, que probablemente la base de datos \textit{Cuban Voice Dataset} no cuente con la riqueza necesaria para que un modelo realice un aprendizaje adecuado que reporte resultados aceptables. Debido a esto se considera la idea de realizar un entrenamiento desde cero sobre modelo VITS utilizando el conjunto de datos de \textit{The M-AILABS Dataset} con su única voz femenina Angelina, este conjunto cuenta con más de 7000 clips de audio para el entrenamiento, con un \textit{sample rate} de 16000Hz.
 
-El entrenamiento se realiza nuevamente en Google Colab, con las mismas características de los anteriores, aunque, esta vez por la densidad de la base de datos el proceso demora más, tomando alrededor de 12 horas para llegar a 321 \textit{epochs}, y consumiendo una cantidad proporcional de recursos. El modelo que se obtiene produce una señal inteligible y libre de ruidos, aunque mejorable en algunas expresiones, pues la meta ideal sería un entrenamiento de 1000 \textit{epochs}.
+El entrenamiento se realiza nuevamente en Google Colab, con las mismas características de los anteriores, aunque, esta vez por la densidad de la base de datos el proceso demora más, tomando alrededor de 12 horas para llegar a 321 \textit{epochs}, y consumiendo una cantidad proporcional de recursos.
 
-Con un modelo que arroja resultados bastante buenos, se procede a realizar \textit{fine-tuning} sobre la base de datos construida con un hablante cubano, se efectua con misma configuración que el entrenamiento anterior, por alrededor de 1000 \textit{epochs}, y arroja los mejores resultados obtenidos sobre este conjunto de datos. Sin embargo, tampoco se consideran buenos, pues aunque se elimina el ruido en las grabaciones, muchas palabras resultan indescifrables para el oyente.
+El modelo que se obtiene produce una señal inteligible y libre de ruidos, aunque mejorable en algunas expresiones, pues la meta ideal sería un entrenamiento de 1000 \textit{epochs}.
 
-A continuación las evaluaciónes de expertos utilizando la medida MOS:
+Con un modelo que arroja resultados bastante buenos, se procede a realizar \textit{fine-tuning} sobre la base de datos obtenida de la investigación, se efectúa con la misma configuración que el entrenamiento anterior, por alrededor de 1000 \textit{epochs}, y arroja los mejores resultados obtenidos sobre este conjunto de datos. Sin embargo, tampoco se consideran buenos, pues aunque se elimina el ruido en las grabaciones, muchas palabras resultan aún indescifrables para el oyente.
+
+A continuación las evaluaciones de expertos utilizando la medida MOS:
 
 
 \begin{table}[H]
@@ -283,9 +287,9 @@ Las mejores puntuaciones las recibe el modelo entrenado con la base de datos fue
 
 \section{Conclusiones Parciales}
 
-A raíz de los resultados obtenidos en las secciones \ref{tacotron2}, \ref{vits_s}, \ref{vits_it_en}, \ref{vits_angel} se concluir que Tacotron2 parece ser una red demasiado grande que no se adapta a las necesidades de la investigación, produciendo finalmente señales corruptas e indescifrables.
+A raíz de los resultados obtenidos en las secciones \ref{tacotron2}, \ref{vits_s}, \ref{vits_it_en}, \ref{vits_angel} es posible concluir que Tacotron2 parece ser una red demasiado grande que no se adapta a las necesidades de la investigación, produciendo finalmente señales corruptas e indescifrables.
 
-El modelo VITS es significativamente más rápido en lo que respecta a la velocidad del entrenamiento, y además más adaptable a nuevos conjuntos de datos. Con un entrenamiento desde cero sobre una base de datos relativamente pequeña y rústica, produce un discurso bastante malo, aunque entendible en ocasiones. De forma similar sucede con el modelo VITS preentrenado en italiano y luego sometido a un proceso de \textit{fine-tuning} con el conjunto mencionado anteriormente, a pesar de la rapidez del entrenamiento, produce una señal algo ruidosa, y solo entendible en ocasiones. El mejor resultado con diferencia es el producido por el modelo VITS entrenado desde cero con una base de datos fuerte, aunque este no cumple con el objetivo de la investigación pues la voz corresponde a un hablante mexicano. El discurso obtenido de este modelo recibe la mayor medida MOS. Al mismo tiempo al realizar \textit{fine-tuning} sobre este modelo con la base de datos cubana, el audio empeora y resulta incomprensible en ocasiones. Debe ser aclarado que este último modelo es el mejor resultado obtenido sobre el conjunto de datos conformado con voces cubanas, con la obtención de grabaciones libres de ruido. 
+El modelo VITS es significativamente mejor en lo que respecta a la velocidad del entrenamiento, y además más adaptable a nuevos conjuntos de datos. Con un entrenamiento desde cero sobre una base de datos relativamente pequeña y rústica, produce un discurso bastante malo, aunque entendible en ocasiones. De forma similar sucede con el modelo VITS preentrenado en italiano y luego sometido a un proceso de \textit{fine-tuning} con el conjunto mencionado anteriormente, a pesar de la rapidez del entrenamiento, produce una señal algo ruidosa, y solo entendible en ocasiones. El mejor resultado con diferencia es el producido por el modelo VITS entrenado desde cero con una base de datos fuerte, aunque este no cumple con el objetivo de la investigación pues la voz corresponde a un hablante mexicano. El discurso obtenido de este modelo recibe la mayor medida MOS. Al mismo tiempo al realizar \textit{fine-tuning} sobre este modelo con la base de datos cubana, el audio empeora y resulta incomprensible en ocasiones. Debe ser aclarado que este último modelo es el mejor resultado obtenido sobre el conjunto de datos conformado con voces cubanas, con la obtención de grabaciones libres de ruido. 
 
 
 
